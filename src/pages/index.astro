@@ -1,0 +1,188 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import Button from "@/components/ui/button.astro";
+import Card from "@/components/ui/card.astro";
+import Badge from "@/components/ui/badge.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import { ArrowRight, Github, Globe } from "lucide-astro";
+import HeroBackground from "@/components/HeroBackground.astro";
+
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const talks = (await getCollection("talks"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const projects = (await getCollection("projects")).filter((p) => p.data.featured);
+---
+
+<BaseLayout mainClass="">
+  {/* Hero Section */}
+  <section class="relative border-b border-border/40 bg-background/50 overflow-hidden">
+    <HeroBackground />
+    <div class="container relative z-10 grid items-center gap-6 pb-8 pt-6 md:py-24 lg:py-32">
+        <div class="flex max-w-[980px] flex-col items-start gap-4">
+        <h1 class="text-4xl font-extrabold leading-tight tracking-tighter md:text-6xl lg:text-7xl lg:leading-[1.1] text-gradient">
+          Building the tools <br class="hidden sm:inline" />
+          I wish I had for React Native.
+        </h1>
+        <p class="max-w-[750px] text-lg text-muted-foreground sm:text-xl md:text-2xl leading-relaxed">
+          A digital garden where I share my journey building developer tools to help create better React Native apps.
+        </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 mt-2">
+        <Button href="/blog" size="lg" class="h-12 px-8 text-base">
+            Read journal
+        </Button>
+        <Button variant="outline" size="lg" href="https://github.com/v3ron" class="h-12 px-8 text-base">
+            <Github class="mr-2 h-5 w-5" />
+            GitHub
+        </Button>
+        </div>
+    </div>
+  </section>
+
+  {/* Latest Posts */}
+  <section class="container py-12 md:py-20 lg:py-24">
+    <div class="mx-auto flex flex-col items-start justify-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <h2 class="font-heading text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl tracking-tighter">
+        Engineering journal
+      </h2>
+      <Button variant="ghost" href="/blog" class="text-muted-foreground hover:text-foreground">
+        View all entries <ArrowRight class="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+    <div class="mx-auto grid justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-10">
+      {
+        posts.map((post) => (
+          <a href={`/blog/${post.id}`} class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1">
+            <div class="space-y-4">
+              <h3 class="font-bold text-xl leading-tight group-hover:underline decoration-2 underline-offset-4 decoration-primary/50">{post.data.title}</h3>
+              <p class="text-muted-foreground line-clamp-3 leading-relaxed">
+                {post.data.description}
+              </p>
+            </div>
+            <div class="mt-6 flex items-center justify-between text-sm text-muted-foreground">
+              <FormattedDate date={post.data.pubDate} />
+              <ArrowRight class="h-4 w-4 opacity-0 transition-all -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" />
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Projects Bento */}
+  <section class="border-t border-border/40 bg-muted/10">
+    <div class="container py-12 md:py-20 lg:py-24">
+        <div class="mx-auto flex flex-col items-start justify-center gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
+            <h2 class="font-heading text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl tracking-tighter">
+              Open Source
+            </h2>
+            <Button variant="ghost" href="/projects" class="text-muted-foreground hover:text-foreground">
+              View all projects <ArrowRight class="ml-2 h-4 w-4" />
+            </Button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+            projects.map((project) => (
+            <div class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-background p-6 transition-all hover:border-foreground/20 hover:shadow-md h-full">
+                <div class="flex items-start justify-between">
+                <div class="flex items-center gap-4">
+                    {project.data.logo ? (
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-muted p-2">
+                             <img src={project.data.logo} alt={project.data.title} class="h-full w-full object-contain" />
+                        </div>
+                    ) : (
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary">
+                        <Github class="h-6 w-6" />
+                        </div>
+                    )}
+                    <div>
+                    <h3 class="font-bold text-lg">
+                        {project.data.title}
+                    </h3>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 relative z-20">
+                    <a href={project.data.repoUrl} target="_blank" class="p-2 rounded-full hover:bg-muted transition-colors">
+                        <Github class="h-4 w-4" />
+                    </a>
+                    {project.data.demoUrl && (
+                        <a href={project.data.demoUrl} target="_blank" class="p-2 rounded-full hover:bg-muted transition-colors">
+                        <Globe class="h-4 w-4" />
+                        </a>
+                    )}
+                </div>
+                </div>
+
+                <div class="mt-6 flex-1">
+                <p class="text-muted-foreground text-sm leading-relaxed">
+                    {project.data.description}
+                </p>
+                </div>
+
+                <div class="mt-6 flex flex-wrap gap-2">
+                {project.data.techStack.map((tech) => (
+                    <Badge variant="outline" class="bg-muted/50 text-[10px] px-2 py-0.5 font-normal">{tech}</Badge>
+                ))}
+                </div>
+                
+                <a href={project.data.repoUrl} target="_blank" class="absolute inset-0 z-10 focus:outline-none">
+                <span class="sr-only">View {project.data.title}</span>
+                </a>
+            </div>
+            ))
+        }
+        </div>
+    </div>
+  </section>
+
+  {/* Talks Section */}
+  <section class="container py-12 md:py-20 lg:py-24 border-t border-border/40">
+    <div class="mx-auto flex flex-col items-start justify-center gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
+      <h2 class="font-heading text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl tracking-tighter">
+        Featured Talks
+      </h2>
+      <Button variant="ghost" href="/talks" class="text-muted-foreground hover:text-foreground">
+        View all talks <ArrowRight class="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+    <div class="grid justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        talks.map((talk) => (
+          <div class="group relative flex flex-col justify-between rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-sm">
+             <div class="space-y-3">
+                <div class="flex flex-col gap-2">
+                     <h3 class="font-bold text-lg leading-tight group-hover:underline decoration-2 underline-offset-4 decoration-primary/50">{talk.data.title}</h3>
+                     <div>
+                        <Badge variant="secondary" class="shrink-0">{talk.data.event}</Badge>
+                     </div>
+                </div>
+                <p class="text-sm text-muted-foreground">
+                    <FormattedDate date={talk.data.date} />
+                </p>
+             </div>
+             
+             {talk.data.video && (
+               <div class="mt-6 pt-4 border-t border-border/30 flex items-center justify-between">
+                  <span class="text-xs font-medium text-muted-foreground">Watch recording</span>
+                  <ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+               </div>
+             )}
+
+             {/* Link overlay */}
+             {talk.data.video ? (
+                <a href={talk.data.video} target="_blank" class="absolute inset-0 z-10"><span class="sr-only">Watch</span></a>
+             ) : null}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

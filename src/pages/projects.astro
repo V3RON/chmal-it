@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import Card from "@/components/ui/card.astro";
+import Badge from "@/components/ui/badge.astro";
+import { Github, Globe, ArrowUpRight } from "lucide-astro";
+import Button from "@/components/ui/button.astro";
+
+const projects = await getCollection("projects");
+const featuredProjects = projects.filter((project) => project.data.featured);
+const otherProjects = projects.filter((project) => !project.data.featured);
+---
+
+<BaseLayout title="Projects" description="Open source projects and experiments.">
+  <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+    <div class="flex-1 space-y-4">
+      <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl text-gradient">
+        Projects
+      </h1>
+      <p class="text-xl text-muted-foreground">
+        Open source libraries, apps, and experiments.
+      </p>
+    </div>
+  </div>
+
+  {/* Bento Grid for Featured Projects */}
+  <section class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {featuredProjects.map((project) => (
+      <div class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/30 p-6 transition-all hover:bg-muted/50 hover:shadow-md h-full">
+        
+        <div class="flex items-start justify-between">
+           <div class="flex items-center gap-3">
+             {project.data.logo ? (
+                <img src={project.data.logo} alt={project.data.title} class="h-10 w-10 rounded-md object-contain" />
+             ) : (
+                <div class="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <Github class="h-6 w-6" />
+                </div>
+             )}
+             <div>
+               <h3 class="font-bold text-lg">
+                 {project.data.title}
+               </h3>
+             </div>
+           </div>
+           
+           <div class="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+              <a href={project.data.repoUrl} target="_blank" class="text-muted-foreground hover:text-foreground">
+                <Github class="h-5 w-5" />
+              </a>
+              {project.data.demoUrl && (
+                <a href={project.data.demoUrl} target="_blank" class="text-muted-foreground hover:text-foreground">
+                  <Globe class="h-5 w-5" />
+                </a>
+              )}
+           </div>
+        </div>
+
+        <div class="mt-4 flex-1">
+          <p class="text-muted-foreground text-sm">
+            {project.data.description}
+          </p>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-2">
+          {project.data.techStack.map((tech) => (
+             <Badge variant="outline" class="bg-background/50 backdrop-blur-sm text-[10px]">{tech}</Badge>
+          ))}
+        </div>
+        
+        {/* Full card link overlay */}
+        <a href={project.data.repoUrl} target="_blank" class="absolute inset-0 z-10 focus:outline-none">
+          <span class="sr-only">View {project.data.title}</span>
+        </a>
+      </div>
+    ))}
+  </section>
+
+  <hr class="my-12 border-border/40" />
+  
+  <h2 class="mb-6 text-2xl font-bold tracking-tight">All Projects</h2>
+
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      otherProjects.map((project) => (
+        <Card class="flex flex-col justify-between p-6 transition-all hover:border-foreground/20 hover:shadow-sm">
+          <div class="space-y-4">
+            <h2 class="text-xl font-bold tracking-tight">{project.data.title}</h2>
+            <p class="text-muted-foreground">{project.data.description}</p>
+            <div class="flex flex-wrap gap-2">
+              {project.data.techStack.map((tech) => (
+                <Badge variant="secondary" class="text-xs font-normal">
+                  {tech}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div class="mt-6 flex gap-4">
+            <Button variant="outline" size="sm" class="w-full" href={project.data.repoUrl}>
+              <Github class="mr-2 h-4 w-4" />
+              GitHub
+            </Button>
+            {project.data.demoUrl && (
+               <Button variant="outline" size="sm" class="w-full" href={project.data.demoUrl}>
+                  <Globe class="mr-2 h-4 w-4" />
+                  Demo
+               </Button>
+            )}
+          </div>
+        </Card>
+      ))
+    }
+  </div>
+</BaseLayout>

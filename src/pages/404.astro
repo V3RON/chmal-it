@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "@/components/ui/button.astro";
+import { ChevronLeft } from "lucide-astro";
+---
+
+<BaseLayout title="404 - Not Found" description="Page not found">
+  <div class="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] text-center px-4">
+    <div class="space-y-6">
+      <h1 class="text-9xl font-extrabold tracking-tighter text-gradient select-none">404</h1>
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+        "It works on my machine..."
+      </h2>
+      <p class="max-w-[600px] text-muted-foreground text-lg">
+        ...but this page definitely doesn't exist on the server. You might have taken a wrong turn in the dependency tree, or maybe this route was just tree-shaken away.
+      </p>
+      <div class="pt-6">
+        <Button href="/" size="lg">
+          <ChevronLeft class="mr-2 h-4 w-4" />
+          Return to safety
+        </Button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,64 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Button from '@/components/ui/button.astro';
+import { ChevronLeft } from 'lucide-astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+
+const wordCount = post.body ? post.body.split(/\s+/g).length : 0;
+const readingTime = Math.ceil(wordCount / 200);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="container relative max-w-3xl py-6 lg:py-10">
+    <Button variant="ghost" href="/blog" class="absolute left-[-200px] top-14 hidden xl:inline-flex text-muted-foreground hover:text-foreground">
+      <ChevronLeft class="mr-2 h-4 w-4" />
+      Back
+    </Button>
+    <div class="mb-8">
+      <div class="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+         <FormattedDate date={post.data.pubDate} />
+         {readingTime > 0 && (
+           <>
+             <span>•</span>
+             <span>{readingTime} min read</span>
+           </>
+         )}
+      </div>
+      <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl leading-tight mb-4">
+        {post.data.title}
+      </h1>
+      {post.data.heroImage && (
+        <img
+          src={post.data.heroImage.src}
+          alt={post.data.title}
+          width={720}
+          height={405}
+          class="mt-8 rounded-md border border-border/40 bg-muted transition-colors"
+        />
+      )}
+    </div>
+    <div class="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tighter prose-code:before:content-none prose-code:after:content-none">
+      <Content />
+    </div>
+    <hr class="mt-12 border-border/40" />
+    <div class="flex justify-center py-6 lg:py-10">
+      <Button href="/blog" variant="ghost">
+        <ChevronLeft class="mr-2 h-4 w-4" />
+        See all posts
+      </Button>
+    </div>
+  </article>
+</BaseLayout>

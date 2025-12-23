@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import Card from "@/components/ui/card.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import Button from "@/components/ui/button.astro";
+import { Image } from "astro:assets";
+
+import talk1 from "@/assets/talks/talk-1.jpeg";
+import talk2 from "@/assets/talks/talk-2.jpeg";
+import talk3 from "@/assets/talks/talk-3.jpeg";
+import talk4 from "@/assets/talks/talk-4.jpeg";
+
+const talks = (await getCollection("talks")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const images = [talk1, talk2, talk3, talk4]; // Updated with RUC 2025 photo
+---
+
+<BaseLayout title="Talks" description="My public speaking history.">
+  <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+    <div class="flex-1 space-y-4">
+      <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl text-gradient">
+        Talks
+      </h1>
+      <p class="text-xl text-muted-foreground">
+        Conferences, meetups, and workshops I've spoken at.
+      </p>
+    </div>
+  </div>
+
+  {/* Bento Grid Mosaic */}
+  <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+    {images.map((img, i) => (
+      <div class="group relative aspect-video overflow-hidden rounded-xl border border-border/50 bg-muted md:aspect-square">
+        <Image 
+          src={img} 
+          alt={`Talk photo ${i + 1}`} 
+          class="h-full w-full object-cover transition-all duration-500 group-hover:scale-105 filter grayscale hover:grayscale-0"
+          width={600}
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      </div>
+    ))}
+  </div>
+
+  <hr class="my-12 border-border/40" />
+
+  <div class="space-y-8">
+    {
+      talks.map((talk) => (
+        <Card class="p-6 transition-all hover:border-foreground/20 hover:shadow-sm">
+          <div class="flex flex-col gap-2 md:flex-row md:justify-between">
+            <div class="space-y-1">
+              <h2 class="text-2xl font-bold tracking-tight">{talk.data.title}</h2>
+              <p class="text-muted-foreground">{talk.data.event} {talk.data.location ? `• ${talk.data.location}` : ''}</p>
+            </div>
+            <div class="text-sm text-muted-foreground">
+               <FormattedDate date={talk.data.date} />
+            </div>
+          </div>
+          <div class="mt-4 prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
+            <p>{talk.data.description}</p>
+          </div>
+          <div class="mt-6 flex gap-4">
+            {talk.data.video && (
+               <Button variant="outline" size="sm" href={talk.data.video}>Video</Button>
+            )}
+             {talk.data.slides && (
+               <Button variant="outline" size="sm" href={talk.data.slides}>Slides</Button>
+            )}
+          </div>
+        </Card>
+      ))
+    }
+  </div>
+</BaseLayout>

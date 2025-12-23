@@ -1,0 +1,129 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import { SITE_TITLE } from "../consts";
+import ThemeToggle from "./ThemeToggle.astro";
+import { Menu, Github, X } from "lucide-astro";
+import { Image } from "astro:assets";
+import profileImage from "../assets/profile.png";
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="container flex h-16 items-center">
+    
+    {/* Desktop Logo & Nav */}
+    <div class="mr-4 hidden md:flex">
+      <a href="/" class="mr-6 flex items-center space-x-2">
+        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
+          <Image 
+            src={profileImage} 
+            alt="Szymon Chmal" 
+            class="h-full w-full object-cover"
+            width={64}
+            height={64}
+            loading="eager"
+          />
+        </div>
+        <span class="hidden font-bold sm:inline-block tracking-tight">
+          {SITE_TITLE}
+        </span>
+      </a>
+      <nav class="flex items-center space-x-6 text-sm font-medium">
+        <HeaderLink href="/blog">Blog</HeaderLink>
+        <HeaderLink href="/projects">Projects</HeaderLink>
+        <HeaderLink href="/talks">Talks</HeaderLink>
+        <HeaderLink href="/about">About</HeaderLink>
+      </nav>
+    </div>
+
+    {/* Mobile Logo */}
+    <div class="flex md:hidden">
+       <a href="/" class="flex items-center space-x-2">
+        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
+          <Image 
+            src={profileImage} 
+            alt="Szymon Chmal" 
+            class="h-full w-full object-cover"
+            width={64}
+            height={64}
+            loading="eager"
+          />
+        </div>
+        <span class="font-bold tracking-tight">
+          {SITE_TITLE}
+        </span>
+      </a>
+    </div>
+
+    {/* Right Side Actions */}
+    <div class="flex flex-1 items-center justify-end space-x-4">
+      <nav class="flex items-center space-x-1">
+        <a href="https://github.com/v3ron" target="_blank" rel="noreferrer">
+          <div class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+            <Github class="h-4 w-4" />
+            <span class="sr-only">GitHub</span>
+          </div>
+        </a>
+        <a href="https://x.com/chmalszymon" target="_blank" rel="noreferrer">
+          <div class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current"><title>X</title><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+            <span class="sr-only">X (Twitter)</span>
+          </div>
+        </a>
+        <ThemeToggle />
+        
+        {/* Mobile Menu Trigger */}
+        <button id="mobile-menu-trigger" class="md:hidden inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+            <Menu class="h-5 w-5" />
+            <span class="sr-only">Toggle Menu</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  {/* Mobile Menu Overlay */}
+  <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden">
+     <div class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+        <div class="flex flex-col space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="font-bold text-lg">{SITE_TITLE}</span>
+                <button id="mobile-menu-close" class="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                    <X class="h-6 w-6" />
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-2">
+                <a href="/blog" class="text-sm font-medium transition-colors hover:text-primary">Blog</a>
+                <a href="/projects" class="text-sm font-medium transition-colors hover:text-primary">Projects</a>
+                <a href="/talks" class="text-sm font-medium transition-colors hover:text-primary">Talks</a>
+                <a href="/about" class="text-sm font-medium transition-colors hover:text-primary">About</a>
+            </nav>
+        </div>
+     </div>
+  </div>
+</header>
+
+<script is:inline>
+  const trigger = document.getElementById('mobile-menu-trigger');
+  const close = document.getElementById('mobile-menu-close');
+  const menu = document.getElementById('mobile-menu');
+
+  if (trigger && close && menu) {
+    trigger.addEventListener('click', () => {
+        menu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    });
+
+    close.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        document.body.style.overflow = '';
+    });
+
+    // Close on link click
+    menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    });
+  }
+</script>
