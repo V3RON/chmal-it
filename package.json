@@ -17,6 +17,7 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@tailwindcss/typography": "^0.5.19",
     "astro": "^5.16.6",
+    "astro-og-canvas": "^0.7.2",
     "clsx": "^2.1.1",
     "lucide-astro": "^0.556.0",
     "sharp": "^0.34.3",
