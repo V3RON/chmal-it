@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
+import { Image } from '@unpic/astro';
 import profileImage from '../assets/profile.png';
 import Card from '@/components/ui/Card.astro';
 import Badge from '@/components/ui/Badge.astro';
@@ -8,6 +8,9 @@ import Separator from '@/components/ui/Separator.astro';
 import { Briefcase, MapPin, Award, Users, GraduationCap, Star } from 'lucide-astro';
 import ExperienceList from '@/components/ExperienceList.astro';
 import ExperienceItem from '@/components/ExperienceItem.astro';
+import { generateBlurhashPlaceholder } from '@/lib/blurhash';
+
+const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile.png');
 
 const experience = [
   {
@@ -91,7 +94,7 @@ const recognitions = [
    {/* Hero Profile Section */}
    <div class="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12">
     <div class="relative shrink-0">
-      <div class="relative h-48 w-48 overflow-hidden rounded-full border-4 border-background shadow-xl ring-1 ring-border/50 md:h-64 md:w-64">
+      <div class="relative h-48 w-48 overflow-hidden rounded-full border-4 border-background bg-muted shadow-xl ring-1 ring-border/50 md:h-64 md:w-64">
         <Image 
           src={profileImage} 
           alt="Szymon Chmal" 
@@ -99,6 +102,7 @@ const recognitions = [
           width={512}
           height={512}
           loading="eager"
+          background={profilePlaceholder}
         />
       </div>
     </div>

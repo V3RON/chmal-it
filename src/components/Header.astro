@@ -3,9 +3,12 @@ import HeaderLink from "./HeaderLink.astro";
 import { SITE_TITLE } from "../consts";
 import ThemeToggle from "./ThemeToggle.astro";
 import { Menu, Github, X } from "lucide-astro";
-import { Image } from "astro:assets";
+import { Image } from "@unpic/astro";
 import profileImage from "../assets/profile.png";
 import Button from "@/components/ui/Button.astro";
+import { generateBlurhashPlaceholder } from "@/lib/blurhash";
+
+const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile.png');
 ---
 
 <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -14,7 +17,7 @@ import Button from "@/components/ui/Button.astro";
     {/* Desktop Logo & Nav */}
     <div class="mr-4 hidden md:flex">
       <a href="/" class="mr-6 flex items-center space-x-2">
-        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
+        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50 bg-muted">
           <Image 
             src={profileImage} 
             alt="Szymon Chmal" 
@@ -22,6 +25,7 @@ import Button from "@/components/ui/Button.astro";
             width={64}
             height={64}
             loading="eager"
+            background={profilePlaceholder}
           />
         </div>
         <span class="hidden font-bold sm:inline-block tracking-tight">
@@ -39,7 +43,7 @@ import Button from "@/components/ui/Button.astro";
     {/* Mobile Logo */}
     <div class="flex md:hidden">
        <a href="/" class="flex items-center space-x-2">
-        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
+        <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50 bg-muted">
           <Image 
             src={profileImage} 
             alt="Szymon Chmal" 
@@ -47,6 +51,7 @@ import Button from "@/components/ui/Button.astro";
             width={64}
             height={64}
             loading="eager"
+            background={profilePlaceholder}
           />
         </div>
         <span class="font-bold tracking-tight">

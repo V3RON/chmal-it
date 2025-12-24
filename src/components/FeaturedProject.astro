@@ -3,6 +3,7 @@ import Badge from "@/components/ui/Badge.astro";
 import { Github, Globe } from "lucide-astro";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
+import { Image } from "@unpic/astro";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -16,7 +17,13 @@ const { project, class: className } = Astro.props;
   <div class="flex items-start justify-between">
     <div class="flex items-center gap-4">
       {project.data.logo ? (
-        <img src={project.data.logo} alt={project.data.title} class="h-12 w-12 rounded-lg object-contain bg-muted p-2" />
+        <Image 
+          src={project.data.logo} 
+          alt={project.data.title} 
+          class="h-12 w-12 rounded-lg object-contain bg-muted p-2" 
+          width={48}
+          height={48}
+        />
       ) : (
         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Github class="h-6 w-6" />
