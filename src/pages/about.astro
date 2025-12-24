@@ -15,6 +15,7 @@ const experience = [
     role: "React Native Expert",
     period: "Sept 2024 – Present",
     description: "As part of the Callstack Incubator, I am dedicated to engineering a new generation of React Native developer tooling. I focus on creating high-impact open-source solutions that radically improve the developer experience (DX), making it more pleasant and efficient to build extraordinary mobile applications.",
+    techStack: ["React Native", "Metro", "TypeScript", "Expo"],
     current: true,
   },
   {
@@ -22,36 +23,42 @@ const experience = [
     role: "Tech Lead",
     period: "Apr 2021 – Present",
     description: "As Tech Lead, I guide the engineering team in building a robust mobile platform using React Native and supporting web interfaces. My role encompasses architectural decision-making, project management, and cloud infrastructure logic in Node.js to ensure a seamless user experience.",
+    techStack: ["React Native", "Node.js", "TypeScript", "React", "MongoDB"],
   },
   {
     company: "GDG Toruń",
     role: "Founder & Leader",
     period: "June 2024 – Present",
     description: "Founded and currently lead the region's premier JavaScript-focused community. We bridge the gap between industry and academia by engaging with the local university and organizing regular meetups that foster knowledge exchange among the next generation of engineers.",
+    techStack: ["JavaScript", "TypeScript"],
   },
   {
     company: "Bright Inventions",
     role: "Senior Frontend Developer",
     period: "Oct 2022 – July 2024",
     description: "Delivered high-quality frontend architectures and solutions, focusing on code maintainability, performance optimization, and refined user experiences.",
+    techStack: ["React", "TypeScript", "Next.js", "PostgreSQL"],
   },
   {
     company: "Airnauts.com",
     role: "React Architect / Full Stack Developer",
     period: "Jan 2020 – Sept 2022",
     description: "Architected complex single-page applications across a diverse stack including React, Vue, and Angular. Beyond coding, I played a key role in shaping the engineering culture by conducting interviews and mentoring junior developers, alongside building distributed backend services in .NET Core.",
+    techStack: ["React", "Vue", "Angular", ".NET Core", "PostgreSQL"],
   },
   {
     company: "e-Kiosk S.A.",
     role: "Frontend Engineer",
     period: "Aug 2020 – Mar 2021",
     description: "Focused on the core stability and feature expansion of a major React Native application. I was responsible for debugging critical issues and implementing new functionalities that enhanced the digital reading experience.",
+    techStack: ["React Native", "JavaScript"],
   },
   {
     company: "Sellions.com",
     role: "Full Stack Developer",
     period: "June 2018 – Jan 2020",
     description: "Developed a comprehensive hybrid mobile solution using Ionic and a monolithic Java/Spring backend. I engineered systems for high-volume batch processing using Spring Batch, ensuring efficient data handling for enterprise-scale files.",
+    techStack: ["Ionic", "Spring", "Spring Boot", "PostgreSQL"],
   }
 ];
 
@@ -156,6 +163,7 @@ const recognitions = [
                 company={job.company}
                 period={job.period}
                 description={job.description}
+                techStack={job.techStack}
                 current={job.current}
             />
           ))}
