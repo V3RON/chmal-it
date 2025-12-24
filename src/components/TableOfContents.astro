@@ -1,0 +1,59 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+const filteredHeadings = headings.filter((h) => h.depth > 1 && h.depth <= 3);
+
+if (filteredHeadings.length === 0) return null;
+---
+
+<nav class="toc space-y-3">
+  <p class="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">
+    On this page
+  </p>
+  <ul class="space-y-2 text-[13px] leading-relaxed">
+    {
+      filteredHeadings.map((heading) => (
+        <li
+          class:list={[
+            "transition-colors hover:text-foreground",
+            heading.depth === 2 ? "font-medium" : "pl-4 text-muted-foreground"
+          ]}
+        >
+          <a href={`#${heading.slug}`} class="block py-1">
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  function initTOC() {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const id = entry.target.getAttribute('id');
+        const tocLink = document.querySelector(`.toc a[href="#${id}"]`);
+        
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.toc a').forEach(el => el.classList.remove('text-foreground', 'font-semibold'));
+          tocLink?.classList.add('text-foreground', 'font-semibold');
+        }
+      }
+    }, { rootMargin: '-100px 0% -66%' });
+
+    document.querySelectorAll('h2, h3').forEach((section) => {
+      observer.observe(section);
+    });
+  }
+
+  // Support both initial load and view transitions
+  initTOC();
+  document.addEventListener('astro:page-load', initTOC);
+</script>

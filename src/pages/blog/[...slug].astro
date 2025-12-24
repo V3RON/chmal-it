@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Button from '@/components/ui/Button.astro';
 import { ChevronLeft } from 'lucide-astro';
+import TableOfContents from '@/components/TableOfContents.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -16,55 +17,66 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 const wordCount = post.body ? post.body.split(/\s+/g).length : 0;
 const readingTime = Math.ceil(wordCount / 200);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="container relative max-w-3xl py-4 lg:py-10">
-    <Button variant="ghost" href="/blog" class="absolute left-[-200px] top-14 hidden xl:inline-flex text-muted-foreground hover:text-foreground">
+  <div class="container relative py-4 lg:py-10">
+    <Button variant="ghost" href="/blog" class="absolute left-[-160px] top-14 hidden xl:inline-flex text-muted-foreground hover:text-foreground">
       <ChevronLeft class="mr-2 h-4 w-4" />
       Back
     </Button>
-    <div class="mb-8">
-      <div class="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-         <FormattedDate date={post.data.pubDate} />
-         {readingTime > 0 && (
-           <>
-             <span>•</span>
-             <span>{readingTime} min read</span>
-           </>
-         )}
-      </div>
-      <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl leading-tight mb-4">
-        {post.data.title}
-      </h1>
-      {post.data.heroImage ? (
-        <Image
-          src={post.data.heroImage}
-          alt={post.data.title}
-          width={720}
-          height={405}
-          loading="eager"
-          class="mt-8 rounded-md border border-border/40 bg-muted transition-colors"
-        />
-      ) : (
-        <div class="mt-8 flex aspect-video w-full items-center justify-center rounded-md border border-border/40 bg-muted/50 text-muted-foreground">
-            <span class="text-3xl font-bold opacity-10 select-none">/</span>
+
+    <div class="lg:grid lg:grid-cols-[1fr_240px] lg:gap-10 xl:gap-20">
+      <article class="max-w-3xl">
+        <div class="mb-8">
+          <div class="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+             <FormattedDate date={post.data.pubDate} />
+             {readingTime > 0 && (
+               <>
+                 <span>•</span>
+                 <span>{readingTime} min read</span>
+               </>
+             )}
+          </div>
+          <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl leading-tight mb-4">
+            {post.data.title}
+          </h1>
+          {post.data.heroImage ? (
+            <Image
+              src={post.data.heroImage}
+              alt={post.data.title}
+              width={720}
+              height={405}
+              loading="eager"
+              class="mt-8 rounded-md border border-border/40 bg-muted transition-colors"
+            />
+          ) : (
+            <div class="mt-8 flex aspect-video w-full items-center justify-center rounded-md border border-border/40 bg-muted/50 text-muted-foreground">
+                <span class="text-3xl font-bold opacity-10 select-none">/</span>
+            </div>
+          )}
         </div>
-      )}
+        <div class="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tighter prose-code:before:content-none prose-code:after:content-none">
+          <Content />
+        </div>
+        <hr class="mt-12 border-border/40" />
+        <div class="flex justify-center py-6 lg:py-10">
+          <Button href="/blog" variant="ghost">
+            <ChevronLeft class="mr-2 h-4 w-4" />
+            See all posts
+          </Button>
+        </div>
+      </article>
+      
+      <aside class="hidden lg:block">
+        <div class="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto pr-4">
+          <TableOfContents headings={headings} />
+        </div>
+      </aside>
     </div>
-    <div class="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tighter prose-code:before:content-none prose-code:after:content-none">
-      <Content />
-    </div>
-    <hr class="mt-12 border-border/40" />
-    <div class="flex justify-center py-6 lg:py-10">
-      <Button href="/blog" variant="ghost">
-        <ChevronLeft class="mr-2 h-4 w-4" />
-        See all posts
-      </Button>
-    </div>
-  </article>
+  </div>
 </BaseLayout>
