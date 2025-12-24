@@ -21,4 +21,9 @@ export default defineConfig({
       wrap: true,
     },
   },
+  vite: {
+    ssr: {
+      external: ["sharp"],
+    },
+  },
 });

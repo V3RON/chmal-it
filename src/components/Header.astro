@@ -5,6 +5,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 import { Menu, Github, X } from "lucide-astro";
 import { Image } from "astro:assets";
 import profileImage from "../assets/profile.png";
+import Button from "@/components/ui/Button.astro";
 ---
 
 <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,33 +58,33 @@ import profileImage from "../assets/profile.png";
     {/* Right Side Actions */}
     <div class="flex flex-1 items-center justify-end space-x-4">
       <nav class="flex items-center space-x-1">
-        <a href="https://github.com/v3ron" target="_blank" rel="noreferrer">
-          <div class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+        <Button variant="ghost" size="icon" href="https://github.com/v3ron" target="_blank" rel="noreferrer">
             <Github class="h-4 w-4" />
             <span class="sr-only">GitHub</span>
-          </div>
-        </a>
-        <a href="https://x.com/chmalszymon" target="_blank" rel="noreferrer">
-          <div class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+        </Button>
+        <Button variant="ghost" size="icon" href="https://x.com/chmalszymon" target="_blank" rel="noreferrer">
             <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current"><title>X</title><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
             <span class="sr-only">X (Twitter)</span>
-          </div>
-        </a>
+        </Button>
         <ThemeToggle />
         
         {/* Mobile Menu Trigger */}
-        <button id="mobile-menu-trigger" class="md:hidden inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+        <Button variant="ghost" size="icon" id="mobile-menu-trigger" class="md:hidden">
             <Menu class="h-5 w-5" />
             <span class="sr-only">Toggle Menu</span>
-        </button>
+        </Button>
       </nav>
     </div>
   </div>
 
   {/* Mobile Menu Overlay */}
-  <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden">
-     <div class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
-        <div class="flex flex-col space-y-4">
+  <div id="mobile-menu" class="group fixed inset-0 z-50 flex justify-end md:hidden pointer-events-none" data-state="closed">
+     {/* Backdrop */}
+     <div id="mobile-menu-backdrop" class="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-data-[state=open]:opacity-100 pointer-events-auto cursor-pointer" aria-hidden="true"></div>
+     
+     {/* Panel */}
+     <div class="relative z-10 h-full w-3/4 max-w-sm bg-background border-l border-border p-6 shadow-xl transition-transform duration-300 translate-x-full group-data-[state=open]:translate-x-0 pointer-events-auto">
+        <div class="flex flex-col space-y-6">
             <div class="flex items-center justify-between">
                 <span class="font-bold text-lg">{SITE_TITLE}</span>
                 <button id="mobile-menu-close" class="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -91,11 +92,11 @@ import profileImage from "../assets/profile.png";
                     <span class="sr-only">Close</span>
                 </button>
             </div>
-            <nav class="flex flex-col space-y-2">
-                <a href="/blog" class="text-sm font-medium transition-colors hover:text-primary">Blog</a>
-                <a href="/projects" class="text-sm font-medium transition-colors hover:text-primary">Projects</a>
-                <a href="/talks" class="text-sm font-medium transition-colors hover:text-primary">Talks</a>
-                <a href="/about" class="text-sm font-medium transition-colors hover:text-primary">About</a>
+            <nav class="flex flex-col space-y-4">
+                <a href="/blog" class="text-lg font-medium transition-colors hover:text-primary">Blog</a>
+                <a href="/projects" class="text-lg font-medium transition-colors hover:text-primary">Projects</a>
+                <a href="/talks" class="text-lg font-medium transition-colors hover:text-primary">Talks</a>
+                <a href="/about" class="text-lg font-medium transition-colors hover:text-primary">About</a>
             </nav>
         </div>
      </div>
@@ -105,25 +106,27 @@ import profileImage from "../assets/profile.png";
 <script is:inline>
   const trigger = document.getElementById('mobile-menu-trigger');
   const close = document.getElementById('mobile-menu-close');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
   const menu = document.getElementById('mobile-menu');
 
-  if (trigger && close && menu) {
-    trigger.addEventListener('click', () => {
-        menu.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-    });
+  if (trigger && close && menu && backdrop) {
+    const toggleMenu = (isOpen) => {
+        if (isOpen) {
+            menu.setAttribute('data-state', 'open');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            menu.setAttribute('data-state', 'closed');
+            document.body.style.overflow = '';
+        }
+    };
 
-    close.addEventListener('click', () => {
-        menu.classList.add('hidden');
-        document.body.style.overflow = '';
-    });
+    trigger.addEventListener('click', () => toggleMenu(true));
+    close.addEventListener('click', () => toggleMenu(false));
+    backdrop.addEventListener('click', () => toggleMenu(false));
 
     // Close on link click
     menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menu.classList.add('hidden');
-            document.body.style.overflow = '';
-        });
+        link.addEventListener('click', () => toggleMenu(false));
     });
   }
 </script>

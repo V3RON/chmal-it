@@ -2,7 +2,7 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Button from '@/components/ui/button.astro';
+import Button from '@/components/ui/Button.astro';
 import { ChevronLeft } from 'lucide-astro';
 
 export async function getStaticPaths() {
@@ -22,7 +22,7 @@ const readingTime = Math.ceil(wordCount / 200);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="container relative max-w-3xl py-6 lg:py-10">
+  <article class="container relative max-w-3xl py-4 lg:py-10">
     <Button variant="ghost" href="/blog" class="absolute left-[-200px] top-14 hidden xl:inline-flex text-muted-foreground hover:text-foreground">
       <ChevronLeft class="mr-2 h-4 w-4" />
       Back

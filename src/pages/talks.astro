@@ -1,10 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import Card from "@/components/ui/card.astro";
-import FormattedDate from "@/components/FormattedDate.astro";
-import Button from "@/components/ui/button.astro";
 import { Image } from "astro:assets";
+import TalkCard from "@/components/TalkCard.astro";
 
 import talk1 from "@/assets/talks/talk-1.jpeg";
 import talk2 from "@/assets/talks/talk-2.jpeg";
@@ -50,28 +48,7 @@ const images = [talk1, talk2, talk3, talk4]; // Updated with RUC 2025 photo
   <div class="space-y-8">
     {
       talks.map((talk) => (
-        <Card class="p-6 transition-all hover:border-foreground/20 hover:shadow-sm">
-          <div class="flex flex-col gap-2 md:flex-row md:justify-between">
-            <div class="space-y-1">
-              <h2 class="text-2xl font-bold tracking-tight">{talk.data.title}</h2>
-              <p class="text-muted-foreground">{talk.data.event} {talk.data.location ? `• ${talk.data.location}` : ''}</p>
-            </div>
-            <div class="text-sm text-muted-foreground">
-               <FormattedDate date={talk.data.date} />
-            </div>
-          </div>
-          <div class="mt-4 prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
-            <p>{talk.data.description}</p>
-          </div>
-          <div class="mt-6 flex gap-4">
-            {talk.data.video && (
-               <Button variant="outline" size="sm" href={talk.data.video}>Video</Button>
-            )}
-             {talk.data.slides && (
-               <Button variant="outline" size="sm" href={talk.data.slides}>Slides</Button>
-            )}
-          </div>
-        </Card>
+        <TalkCard talk={talk} />
       ))
     }
   </div>

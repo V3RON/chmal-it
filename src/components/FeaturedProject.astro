@@ -1,0 +1,59 @@
+---
+import Badge from "@/components/ui/Badge.astro";
+import { Github, Globe } from "lucide-astro";
+import type { CollectionEntry } from "astro:content";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+  class?: string;
+}
+
+const { project, class: className } = Astro.props;
+---
+
+<div class={cn("group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/30 p-6 transition-all hover:bg-muted/50 hover:shadow-md h-full", className)}>
+  <div class="flex items-start justify-between">
+    <div class="flex items-center gap-4">
+      {project.data.logo ? (
+        <img src={project.data.logo} alt={project.data.title} class="h-12 w-12 rounded-lg object-contain bg-muted p-2" />
+      ) : (
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Github class="h-6 w-6" />
+        </div>
+      )}
+      <div>
+        <h3 class="font-bold text-lg">
+          {project.data.title}
+        </h3>
+      </div>
+    </div>
+    
+    <div class="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 relative z-20">
+      <a href={project.data.repoUrl} target="_blank" class="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+        <Github class="h-4 w-4" />
+      </a>
+      {project.data.demoUrl && (
+        <a href={project.data.demoUrl} target="_blank" class="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+          <Globe class="h-4 w-4" />
+        </a>
+      )}
+    </div>
+  </div>
+
+  <div class="mt-6 flex-1">
+    <p class="text-muted-foreground text-sm leading-relaxed">
+      {project.data.description}
+    </p>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-2">
+    {project.data.techStack.map((tech) => (
+      <Badge variant="outline" class="bg-background/50 backdrop-blur-sm text-[10px] px-2 py-0.5 font-normal">{tech}</Badge>
+    ))}
+  </div>
+  
+  <a href={project.data.repoUrl} target="_blank" class="absolute inset-0 z-10 focus:outline-none">
+    <span class="sr-only">View {project.data.title}</span>
+  </a>
+</div>

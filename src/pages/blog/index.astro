@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import FormattedDate from "../../components/FormattedDate.astro";
-import Card from "@/components/ui/card.astro";
+import Card from "@/components/ui/Card.astro";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()

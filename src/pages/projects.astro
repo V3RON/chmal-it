@@ -1,10 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import Card from "@/components/ui/card.astro";
-import Badge from "@/components/ui/badge.astro";
+import Card from "@/components/ui/Card.astro";
+import Badge from "@/components/ui/Badge.astro";
 import { Github, Globe, ArrowUpRight } from "lucide-astro";
-import Button from "@/components/ui/button.astro";
+import Button from "@/components/ui/Button.astro";
+import FeaturedProject from "@/components/FeaturedProject.astro";
 
 const projects = await getCollection("projects");
 const featuredProjects = projects.filter((project) => project.data.featured);
@@ -26,53 +27,7 @@ const otherProjects = projects.filter((project) => !project.data.featured);
   {/* Bento Grid for Featured Projects */}
   <section class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {featuredProjects.map((project) => (
-      <div class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/30 p-6 transition-all hover:bg-muted/50 hover:shadow-md h-full">
-        
-        <div class="flex items-start justify-between">
-           <div class="flex items-center gap-3">
-             {project.data.logo ? (
-                <img src={project.data.logo} alt={project.data.title} class="h-10 w-10 rounded-md object-contain" />
-             ) : (
-                <div class="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
-                  <Github class="h-6 w-6" />
-                </div>
-             )}
-             <div>
-               <h3 class="font-bold text-lg">
-                 {project.data.title}
-               </h3>
-             </div>
-           </div>
-           
-           <div class="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-              <a href={project.data.repoUrl} target="_blank" class="text-muted-foreground hover:text-foreground">
-                <Github class="h-5 w-5" />
-              </a>
-              {project.data.demoUrl && (
-                <a href={project.data.demoUrl} target="_blank" class="text-muted-foreground hover:text-foreground">
-                  <Globe class="h-5 w-5" />
-                </a>
-              )}
-           </div>
-        </div>
-
-        <div class="mt-4 flex-1">
-          <p class="text-muted-foreground text-sm">
-            {project.data.description}
-          </p>
-        </div>
-
-        <div class="mt-6 flex flex-wrap gap-2">
-          {project.data.techStack.map((tech) => (
-             <Badge variant="outline" class="bg-background/50 backdrop-blur-sm text-[10px]">{tech}</Badge>
-          ))}
-        </div>
-        
-        {/* Full card link overlay */}
-        <a href={project.data.repoUrl} target="_blank" class="absolute inset-0 z-10 focus:outline-none">
-          <span class="sr-only">View {project.data.title}</span>
-        </a>
-      </div>
+      <FeaturedProject project={project} />
     ))}
   </section>
 

@@ -1,0 +1,35 @@
+---
+import Card from "@/components/ui/Card.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import Button from "@/components/ui/Button.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  talk: CollectionEntry<"talks">;
+}
+
+const { talk } = Astro.props;
+---
+
+<Card class="p-6 transition-all hover:border-foreground/20 hover:shadow-sm">
+  <div class="flex flex-col gap-2 md:flex-row md:justify-between">
+    <div class="space-y-1">
+      <h2 class="text-2xl font-bold tracking-tight">{talk.data.title}</h2>
+      <p class="text-muted-foreground">{talk.data.event} {talk.data.location ? `• ${talk.data.location}` : ''}</p>
+    </div>
+    <div class="text-sm text-muted-foreground">
+       <FormattedDate date={talk.data.date} />
+    </div>
+  </div>
+  <div class="mt-4 prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
+    <p>{talk.data.description}</p>
+  </div>
+  <div class="mt-6 flex gap-4">
+    {talk.data.video && (
+       <Button variant="outline" size="sm" href={talk.data.video}>Video</Button>
+    )}
+     {talk.data.slides && (
+       <Button variant="outline" size="sm" href={talk.data.slides}>Slides</Button>
+    )}
+  </div>
+</Card>

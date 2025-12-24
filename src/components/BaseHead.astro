@@ -27,9 +27,9 @@ let ogImageUrl;
 if (isBlogPost) {
   // Extract slug cleanly
   const slug = pathname.split('/').filter(Boolean).pop();
-  ogImageUrl = new URL(`/og/blog/${slug}.png`, siteBase).toString();
+  ogImageUrl = new URL(`/og/blog/${slug}.webp`, siteBase).toString();
 } else {
-  ogImageUrl = new URL(image.src, siteBase).toString();
+  ogImageUrl = new URL('/og/default.webp', siteBase).toString();
 }
 ---
 

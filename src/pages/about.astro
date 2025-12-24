@@ -2,10 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import profileImage from '../assets/profile.png';
-import Card from '@/components/ui/card.astro';
-import Badge from '@/components/ui/badge.astro';
-import Separator from '@/components/ui/separator.astro';
+import Card from '@/components/ui/Card.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Separator from '@/components/ui/Separator.astro';
 import { Briefcase, MapPin, Award, Users, GraduationCap, Star } from 'lucide-astro';
+import ExperienceList from '@/components/ExperienceList.astro';
+import ExperienceItem from '@/components/ExperienceItem.astro';
 
 const experience = [
   {
@@ -86,124 +88,117 @@ const recognitions = [
 ---
 
 <BaseLayout title="About Me" description="React Native Expert, Microsoft MVP, and Open Source Enthusiast.">
-  <div class="container max-w-4xl py-12 lg:py-20">
+   {/* Hero Profile Section */}
+   <div class="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12">
+    <div class="relative shrink-0">
+      <div class="relative h-48 w-48 overflow-hidden rounded-full border-4 border-background shadow-xl ring-1 ring-border/50 md:h-64 md:w-64">
+        <Image 
+          src={profileImage} 
+          alt="Szymon Chmal" 
+          class="h-full w-full object-cover"
+          width={512}
+          height={512}
+          loading="eager"
+        />
+      </div>
+    </div>
     
-    {/* Hero Profile Section */}
-    <div class="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12">
-      <div class="relative shrink-0">
-        <div class="relative h-48 w-48 overflow-hidden rounded-full border-4 border-background shadow-xl ring-1 ring-border/50 md:h-64 md:w-64">
-          <Image 
-            src={profileImage} 
-            alt="Szymon Chmal" 
-            class="h-full w-full object-cover"
-            width={512}
-            height={512}
-            loading="eager"
-          />
+    <div class="flex-1 space-y-6 text-center md:text-left">
+      <div class="space-y-2">
+        <h1 class="font-heading text-4xl font-bold tracking-tight lg:text-5xl text-gradient">
+          Szymon Chmal
+        </h1>
+        <p class="text-xl font-medium text-foreground/80">
+          Senior Software Magician @ Callstack
+        </p>
+        <div class="flex items-center justify-center gap-2 text-muted-foreground md:justify-start">
+          <MapPin class="h-4 w-4" />
+          <span>Toruń, Poland</span>
         </div>
       </div>
       
-      <div class="flex-1 space-y-6 text-center md:text-left">
-        <div class="space-y-2">
-          <h1 class="font-heading text-4xl font-bold tracking-tight lg:text-5xl text-gradient">
-            Szymon Chmal
-          </h1>
-          <p class="text-xl font-medium text-foreground/80">
-            Senior Software Magician @ Callstack
-          </p>
-          <div class="flex items-center justify-center gap-2 text-muted-foreground md:justify-start">
-            <MapPin class="h-4 w-4" />
-            <span>Toruń, Poland (Capital of Gingerbread & Copernicus)</span>
-          </div>
-        </div>
+      <div class="text-lg leading-relaxed text-muted-foreground space-y-4 text-balance">
+        <p>
+          I'm a frontend engineer turned team lead who's always been driven by curiosity and a huge believer that the best products come from great people working together.
+        </p>
+        <p>
+          Right now, I'm on a mission to build a <strong>new generation of React Native developer tooling</strong>. I want to make it genuinely pleasant, and even fun, for developers to build extraordinary cross-platform apps. By focusing on the <strong>Developer Experience (DX)</strong>, I'm helping teams move faster and stay focused on what really matters: their users.
+        </p>
+        <p>
+          I love talking shop and sharing what I've learned. I've given over <strong>50 talks</strong> at conferences like WeAreDevelopers, and I'm always happy to swap war stories from the dev trenches. I'm also a <strong>Microsoft MVP</strong> and I lead the <strong>GDG Toruń</strong> community in my beautiful current home.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 md:justify-start pt-2">
+         <Badge variant="secondary" class="px-3 py-1"><Award class="mr-1 h-3 w-3" /> Microsoft MVP</Badge>
+         <Badge variant="secondary" class="px-3 py-1"><Users class="mr-1 h-3 w-3" /> GDG Organizer</Badge>
+         <Badge variant="secondary" class="px-3 py-1">Open Source Enthusiast</Badge>
+      </div>
+    </div>
+  </div>
+
+  <Separator class="my-8 md:my-16" />
+
+  <div class="grid gap-10 md:gap-16 md:grid-cols-[1fr_300px]">
+    
+    {/* Main Content */}
+    <div class="space-y-10 md:space-y-16">
+      {/* Experience */}
+      <section class="space-y-8">
+        <h2 class="flex items-center text-2xl font-bold tracking-tight">
+          <Briefcase class="mr-3 h-6 w-6" /> Experience
+        </h2>
         
-        <div class="text-lg leading-relaxed text-muted-foreground space-y-4 text-balance">
-          <p>
-            I'm a frontend engineer turned team lead who's always been driven by curiosity and a huge believer that the best products come from great people working together.
-          </p>
-          <p>
-            Right now, I'm on a mission to build a <strong>new generation of React Native developer tooling</strong>. I want to make it genuinely pleasant, and even fun, for developers to build extraordinary cross-platform apps. By focusing on the <strong>Developer Experience (DX)</strong>, I'm helping teams move faster and stay focused on what really matters: their users.
-          </p>
-          <p>
-            I love talking shop and sharing what I've learned. I've given over <strong>50 talks</strong> at conferences like WeAreDevelopers, and I'm always happy to swap war stories from the dev trenches. I'm also a <strong>Microsoft MVP</strong> and I lead the <strong>GDG Toruń</strong> community in my beautiful current home.
-          </p>
-        </div>
+        <ExperienceList>
+          {experience.map((job) => (
+            <ExperienceItem
+                role={job.role}
+                company={job.company}
+                period={job.period}
+                description={job.description}
+                current={job.current}
+            />
+          ))}
+        </ExperienceList>
+      </section>
 
-        <div class="flex flex-wrap justify-center gap-3 md:justify-start pt-2">
-           <Badge variant="secondary" class="px-3 py-1"><Award class="mr-1 h-3 w-3" /> Microsoft MVP</Badge>
-           <Badge variant="secondary" class="px-3 py-1"><Users class="mr-1 h-3 w-3" /> GDG Organizer</Badge>
-           <Badge variant="secondary" class="px-3 py-1">Open Source Enthusiast</Badge>
+      {/* Education */}
+      <section class="space-y-8">
+        <h2 class="flex items-center text-2xl font-bold tracking-tight">
+          <GraduationCap class="mr-3 h-6 w-6" /> Education
+        </h2>
+        <div class="grid gap-6">
+          {education.map((edu) => (
+            <div class="flex flex-col gap-1">
+              <h3 class="font-bold">{edu.degree}</h3>
+              <p class="text-sm text-foreground/80">{edu.school}</p>
+              <p class="text-xs text-muted-foreground font-mono">{edu.period}</p>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
     </div>
 
-    <Separator class="my-16" />
+    {/* Sidebar */}
+    <aside class="space-y-10 md:space-y-16">
+      {/* Community & Awards */}
+      <section class="space-y-8">
+        <h2 class="flex items-center text-2xl font-bold tracking-tight">
+          <Award class="mr-3 h-6 w-6" /> Recognition
+        </h2>
+        <div class="grid gap-4">
+          {recognitions.map((item) => (
+            <Card class="p-5 transition-all hover:border-foreground/20 bg-muted/10 backdrop-blur-sm">
+              <h3 class="font-bold text-sm">{item.title}</h3>
+              <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mt-1 mb-2">{item.category}</p>
+              <p class="text-xs text-muted-foreground leading-relaxed">
+                {item.description}
+              </p>
+            </Card>
+          ))}
+        </div>
+      </section>
+    </aside>
 
-    <div class="grid gap-16 md:grid-cols-[1fr_300px]">
-      
-      {/* Main Content */}
-      <div class="space-y-16">
-        {/* Experience */}
-        <section class="space-y-8">
-          <h2 class="flex items-center text-2xl font-bold tracking-tight">
-            <Briefcase class="mr-3 h-6 w-6" /> Experience
-          </h2>
-          
-          <div class="relative border-l border-border/50 pl-6 ml-3 space-y-12">
-            {experience.map((job) => (
-              <div class="relative">
-                <span class={`absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-background ${job.current ? 'bg-primary' : 'bg-muted-foreground/30'}`}></span>
-                <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 class="text-lg font-bold">{job.role}</h3>
-                  <span class="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded">{job.period}</span>
-                </div>
-                <p class="text-foreground/80 font-medium mt-1">{job.company}</p>
-                <p class="mt-3 text-muted-foreground text-sm leading-relaxed">
-                  {job.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Education */}
-        <section class="space-y-8">
-          <h2 class="flex items-center text-2xl font-bold tracking-tight">
-            <GraduationCap class="mr-3 h-6 w-6" /> Education
-          </h2>
-          <div class="grid gap-6">
-            {education.map((edu) => (
-              <div class="flex flex-col gap-1">
-                <h3 class="font-bold">{edu.degree}</h3>
-                <p class="text-sm text-foreground/80">{edu.school}</p>
-                <p class="text-xs text-muted-foreground font-mono">{edu.period}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      {/* Sidebar */}
-      <aside class="space-y-16">
-        {/* Community & Awards */}
-        <section class="space-y-8">
-          <h2 class="flex items-center text-2xl font-bold tracking-tight">
-            <Award class="mr-3 h-6 w-6" /> Recognition
-          </h2>
-          <div class="grid gap-4">
-            {recognitions.map((item) => (
-              <Card class="p-5 transition-all hover:border-foreground/20 bg-muted/10 backdrop-blur-sm">
-                <h3 class="font-bold text-sm">{item.title}</h3>
-                <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mt-1 mb-2">{item.category}</p>
-                <p class="text-xs text-muted-foreground leading-relaxed">
-                  {item.description}
-                </p>
-              </Card>
-            ))}
-          </div>
-        </section>
-      </aside>
-
-    </div>
   </div>
 </BaseLayout>
