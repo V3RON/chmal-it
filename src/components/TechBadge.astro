@@ -1,0 +1,70 @@
+---
+import Badge from "./ui/Badge.astro";
+
+interface Props {
+  name: string;
+  variant?: "secondary" | "outline" | "default" | "destructive";
+  class?: string;
+}
+
+const { name, variant = "secondary", class: className } = Astro.props;
+
+// Map technology names to Simple Icons slugs
+const iconMap: Record<string, string> = {
+  "React Native": "react",
+  "React": "react",
+  "TypeScript": "typescript",
+  "JavaScript": "javascript",
+  "Node.js": "nodedotjs",
+  "Expo": "expo",
+  "Swift": "swift",
+  "SwiftUI": "swift",
+  "iOS": "ios",
+  "Action": "githubactions",
+  "GitHub Actions": "githubactions",
+
+  "Vercel": "vercel",
+  "Netlify": "netlify",
+  "Sentry": "sentry",
+  "Redux": "redux",
+  "React Query": "reactquery",
+  "TanStack Query": "reactquery",
+  "Zustand": "react", // Placeholder
+  "Testing": "testinglibrary",
+  "Jest": "jest",
+  "Cypress": "cypress",
+  "Playwright": "playwright",
+  "Ionic": "ionic",
+  "Angular": "angular",
+  "Vue": "vuedotjs",
+  "Java/Spring": "spring",
+  "Spring Boot": "springboot",
+  ".NET Core": "dotnet",
+  "C#": "csharp",
+  "Python": "python",
+  "Go": "go",
+  "Rust": "rust",
+  "GraphQL": "graphql",
+  "Apollo": "apollographql",
+  "Prisma": "prisma",
+  "Drizzle": "drizzle",
+  "Metro": "metro",
+  "DevTools": "react",
+};
+
+const slug = iconMap[name];
+const iconUrl = slug ? `https://cdn.simpleicons.org/${slug}/currentColor` : null;
+---
+
+<Badge variant={variant} class:list={["gap-1.5 py-1 px-2.5 font-medium inline-flex items-center", className]}>
+  {iconUrl && (
+    <img 
+      src={iconUrl} 
+      alt="" 
+      class="h-3 w-3 shrink-0 brightness-0 dark:invert"
+      loading="lazy"
+      aria-hidden="true"
+    />
+  )}
+  <span class="leading-none">{name}</span>
+</Badge>

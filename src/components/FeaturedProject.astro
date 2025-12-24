@@ -4,6 +4,7 @@ import { Github, Globe } from "lucide-astro";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
 import { Image } from "astro:assets";
+import TechBadge from "./TechBadge.astro";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -56,7 +57,11 @@ const { project, class: className } = Astro.props;
 
   <div class="mt-6 flex flex-wrap gap-2">
     {project.data.techStack.map((tech) => (
-      <Badge variant="outline" class="bg-background/50 backdrop-blur-sm text-[10px] px-2 py-0.5 font-normal">{tech}</Badge>
+      <TechBadge 
+        name={tech} 
+        variant="outline" 
+        class="bg-background/50 backdrop-blur-sm text-[10px] px-2 py-1" 
+      />
     ))}
   </div>
   
