@@ -70,7 +70,15 @@
 /* Shiki and Prose Improvements */
 @layer base {
   pre {
-    @apply !bg-[#0D0D0D] border border-border/60 rounded-xl overflow-x-auto !p-5 shadow-2xl !my-8;
+    @apply relative !bg-[#0D0D0D] border border-border/60 rounded-xl overflow-x-auto !p-5 shadow-2xl !my-8;
+  }
+
+  .copy-code-button {
+    @apply absolute top-3 right-3 p-2 rounded-md bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all opacity-0 focus:opacity-100 group-hover:opacity-100 border border-white/10;
+  }
+
+  pre:hover .copy-code-button {
+    @apply opacity-100;
   }
 
   pre code {
