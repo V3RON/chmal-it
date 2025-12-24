@@ -73,8 +73,26 @@ if (isBlogPost) {
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={ogImageUrl} />
 
-<!-- Vercel Speed Insights -->
-<SpeedInsights />
+<!-- View Transitions -->
+<meta name="view-transition" content="same-origin" />
+
+<!-- Speculation Rules -->
+<script type="speculationrules">
+	{
+		"prerender": [
+			{
+				"source": "document",
+				"where": {
+					"and": [
+						{ "href_matches": "/*" },
+						{ "not": { "href_matches": ["/rss.xml", "/sitemap-index.xml"] } }
+					]
+				},
+				"eagerness": "moderate"
+			}
+		]
+	}
+</script>
 
 <script is:inline>
 	const getThemePreference = () => {

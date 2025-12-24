@@ -3,6 +3,10 @@
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/500.css";
 
+@view-transition {
+  navigation: auto;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,7 +34,7 @@
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 0 0% 0%; /* Pure black */
     --foreground: 0 0% 98%;
@@ -100,11 +104,22 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 to-neutral-500 dark:from-neutral-100 dark:to-neutral-500 pb-[0.05em];
   }
-  
+
   .bg-grid {
     background-size: 40px 40px;
-    background-image: linear-gradient(to right, transparent 0, transparent 39px, var(--border) 39px),
-                      linear-gradient(to bottom, transparent 0, transparent 39px, var(--border) 39px);
+    background-image:
+      linear-gradient(
+        to right,
+        transparent 0,
+        transparent 39px,
+        var(--border) 39px
+      ),
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 39px,
+        var(--border) 39px
+      );
     mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   }

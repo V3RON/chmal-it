@@ -12,7 +12,6 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 
 <a 
   href={href} 
-  data-astro-prefetch="viewport"
   class={cn(
     "transition-colors hover:text-foreground/80", 
     isActive ? "text-foreground" : "text-foreground/60",
