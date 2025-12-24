@@ -2,8 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import FormattedDate from "../../components/FormattedDate.astro";
-import Card from "@/components/ui/Card.astro";
-import { Image } from "@unpic/astro";
+import { ArrowRight } from "lucide-astro";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -22,28 +21,21 @@ const posts = (await getCollection("blog")).sort(
     </div>
   </div>
   <hr class="my-8 border-border/40" />
-  <div class="grid gap-10 sm:grid-cols-2">
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {
       posts.map((post) => (
-        <article class="group relative flex flex-col space-y-2">
-          {post.data.heroImage && (
-            <Image
-              src={post.data.heroImage}
-              alt={post.data.title}
-              width={804}
-              height={452}
-              class="rounded-md border border-border/40 bg-muted transition-colors"
-            />
-          )}
-          <h2 class="text-2xl font-bold tracking-tight">{post.data.title}</h2>
-          <p class="text-muted-foreground">{post.data.description}</p>
-          <div class="text-sm text-muted-foreground">
-             <FormattedDate date={post.data.pubDate} />
+        <a href={`/blog/${post.id}`} class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1">
+          <div class="space-y-4">
+            <h3 class="font-bold text-xl leading-tight decoration-2 decoration-primary/50">{post.data.title}</h3>
+            <p class="text-muted-foreground line-clamp-3 leading-relaxed">
+              {post.data.description}
+            </p>
           </div>
-          <a href={`/blog/${post.id}`} class="absolute inset-0">
-            <span class="sr-only">View Article</span>
-          </a>
-        </article>
+          <div class="mt-6 flex items-center justify-between text-sm text-muted-foreground">
+            <FormattedDate date={post.data.pubDate} />
+            <ArrowRight class="h-4 w-4 opacity-0 transition-all -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" />
+          </div>
+        </a>
       ))
     }
   </div>
