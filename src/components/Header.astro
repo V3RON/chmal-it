@@ -13,7 +13,7 @@ import Button from "@/components/ui/Button.astro";
     
     {/* Desktop Logo & Nav */}
     <div class="mr-4 hidden md:flex">
-      <a href="/" class="mr-6 flex items-center space-x-2">
+      <a href="/" data-astro-prefetch="viewport" class="mr-6 flex items-center space-x-2">
         <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50 bg-muted">
           <Image 
             src={profileImage} 
@@ -38,7 +38,7 @@ import Button from "@/components/ui/Button.astro";
 
     {/* Mobile Logo */}
     <div class="flex md:hidden">
-       <a href="/" class="flex items-center space-x-2">
+       <a href="/" data-astro-prefetch="viewport" class="flex items-center space-x-2">
         <div class="h-8 w-8 overflow-hidden rounded-full border border-border/50 bg-muted">
           <Image 
             src={profileImage} 
@@ -94,10 +94,10 @@ import Button from "@/components/ui/Button.astro";
         </button>
       </div>
       <nav class="flex flex-col space-y-4">
-        <a href="/blog" class="text-lg font-medium transition-colors hover:text-primary">Blog</a>
-        <a href="/projects" class="text-lg font-medium transition-colors hover:text-primary">Projects</a>
-        <a href="/talks" class="text-lg font-medium transition-colors hover:text-primary">Talks</a>
-        <a href="/about" class="text-lg font-medium transition-colors hover:text-primary">About</a>
+        <a href="/blog" data-astro-prefetch="viewport" class="text-lg font-medium transition-colors hover:text-primary">Blog</a>
+        <a href="/projects" data-astro-prefetch="viewport" class="text-lg font-medium transition-colors hover:text-primary">Projects</a>
+        <a href="/talks" data-astro-prefetch="viewport" class="text-lg font-medium transition-colors hover:text-primary">Talks</a>
+        <a href="/about" data-astro-prefetch="viewport" class="text-lg font-medium transition-colors hover:text-primary">About</a>
       </nav>
     </div>
   </div>
