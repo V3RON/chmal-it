@@ -1,0 +1,23 @@
+---
+import { cn } from "@/lib/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  class?: string;
+}
+
+const { title, description, class: className } = Astro.props;
+---
+
+<div class={cn("flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8", className)}>
+  <div class="flex-1 space-y-4">
+    <h1 class="inline-block font-heading text-4xl font-bold tracking-tight lg:text-5xl text-gradient">
+      {title}
+    </h1>
+    <p class="text-xl text-muted-foreground">
+      {description}
+    </p>
+  </div>
+</div>
+

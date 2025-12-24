@@ -1,0 +1,27 @@
+---
+import FormattedDate from "@/components/FormattedDate.astro";
+import { ArrowRight } from "lucide-astro";
+import type { CollectionEntry } from "astro:content";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  class?: string;
+}
+
+const { post, class: className } = Astro.props;
+---
+
+<a href={`/blog/${post.id}`} class={cn("group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1", className)}>
+  <div class="space-y-4">
+    <h3 class="font-bold text-xl leading-tight group-hover:underline decoration-2 underline-offset-4 decoration-primary/50">{post.data.title}</h3>
+    <p class="text-muted-foreground line-clamp-3 leading-relaxed">
+      {post.data.description}
+    </p>
+  </div>
+  <div class="mt-6 flex items-center justify-between text-sm text-muted-foreground">
+    <FormattedDate date={post.data.pubDate} />
+    <ArrowRight class="h-4 w-4 opacity-0 transition-all -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" />
+  </div>
+</a>
+

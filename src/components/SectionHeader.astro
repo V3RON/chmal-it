@@ -1,0 +1,24 @@
+---
+import Button from "@/components/ui/Button.astro";
+import { ArrowRight } from "lucide-astro";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  title: string;
+  viewAllText: string;
+  viewAllHref: string;
+  class?: string;
+}
+
+const { title, viewAllText, viewAllHref, class: className } = Astro.props;
+---
+
+<div class={cn("mx-auto flex flex-col items-start justify-center gap-4 sm:flex-row sm:items-center sm:justify-between", className)}>
+  <h2 class="font-heading text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl tracking-tighter">
+    {title}
+  </h2>
+  <Button variant="ghost" href={viewAllHref} class="text-muted-foreground hover:text-foreground -ml-4 sm:ml-0">
+    {viewAllText} <ArrowRight class="ml-2 h-4 w-4" />
+  </Button>
+</div>
+

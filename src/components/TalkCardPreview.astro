@@ -1,0 +1,41 @@
+---
+import Badge from "@/components/ui/Badge.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import { ArrowRight } from "lucide-astro";
+import type { CollectionEntry } from "astro:content";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  talk: CollectionEntry<"talks">;
+  class?: string;
+}
+
+const { talk, class: className } = Astro.props;
+---
+
+<div class={cn("group relative flex flex-col justify-between rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-sm", className)}>
+  <div class="space-y-3">
+    <div class="flex flex-col gap-2">
+      <h3 class="font-bold text-lg leading-tight decoration-2 decoration-primary/50">{talk.data.title}</h3>
+      <div>
+        <Badge variant="secondary" class="shrink-0">{talk.data.event}</Badge>
+      </div>
+    </div>
+    <p class="text-sm text-muted-foreground">
+      <FormattedDate date={talk.data.date} />
+    </p>
+  </div>
+  
+  {talk.data.video && (
+    <div class="mt-6 pt-4 border-t border-border/30 flex items-center justify-between">
+      <span class="text-xs font-medium text-muted-foreground">Watch recording</span>
+      <ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+    </div>
+  )}
+
+  {/* Link overlay */}
+  {talk.data.video ? (
+    <a href={talk.data.video} target="_blank" class="absolute inset-0 z-10"><span class="sr-only">Watch</span></a>
+  ) : null}
+</div>
+
