@@ -1,9 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { Image } from "@unpic/astro";
+import { Image } from "astro:assets";
 import TalkCard from "@/components/TalkCard.astro";
-import { generateBlurhashPlaceholder } from "@/lib/blurhash";
 
 import talk1 from "@/assets/talks/talk-1.jpeg";
 import talk2 from "@/assets/talks/talk-2.jpeg";
@@ -15,18 +14,11 @@ const talks = (await getCollection("talks")).sort(
 );
 
 const imageData = [
-  { img: talk1, path: "src/assets/talks/talk-1.jpeg" },
-  { img: talk2, path: "src/assets/talks/talk-2.jpeg" },
-  { img: talk3, path: "src/assets/talks/talk-3.jpeg" },
-  { img: talk4, path: "src/assets/talks/talk-4.jpeg" },
+  { img: talk1 },
+  { img: talk2 },
+  { img: talk3 },
+  { img: talk4 },
 ];
-
-const imagesWithPlaceholders = await Promise.all(
-  imageData.map(async (item) => ({
-    ...item,
-    placeholder: await generateBlurhashPlaceholder(item.path),
-  }))
-);
 ---
 
 <BaseLayout title="Talks" description="My public speaking history.">
@@ -43,7 +35,7 @@ const imagesWithPlaceholders = await Promise.all(
 
   {/* Bento Grid Mosaic */}
   <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-    {imagesWithPlaceholders.map(({ img, placeholder }, i) => (
+    {imageData.map(({ img }, i) => (
       <div class="group relative aspect-video overflow-hidden rounded-xl border border-border/50 bg-muted md:aspect-square">
         <Image 
           src={img} 
@@ -51,7 +43,6 @@ const imagesWithPlaceholders = await Promise.all(
           class="h-full w-full object-cover transition-all duration-500 group-hover:scale-105 filter grayscale hover:grayscale-0"
           width={600}
           height={600}
-          background={placeholder}
         />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
       </div>

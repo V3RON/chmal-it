@@ -1,16 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Image } from '@unpic/astro';
-import profileImage from '../assets/profile.png';
+import { Image } from 'astro:assets';
+import profileImage from '@/assets/profile.png';
 import Card from '@/components/ui/Card.astro';
 import Badge from '@/components/ui/Badge.astro';
 import Separator from '@/components/ui/Separator.astro';
 import { Briefcase, MapPin, Award, Users, GraduationCap, Star } from 'lucide-astro';
 import ExperienceList from '@/components/ExperienceList.astro';
 import ExperienceItem from '@/components/ExperienceItem.astro';
-import { generateBlurhashPlaceholder } from '@/lib/blurhash';
-
-const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile.png');
 
 const experience = [
   {
@@ -102,7 +99,6 @@ const recognitions = [
           width={512}
           height={512}
           loading="eager"
-          background={profilePlaceholder}
         />
       </div>
     </div>

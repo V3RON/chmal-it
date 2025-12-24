@@ -3,12 +3,9 @@ import HeaderLink from "./HeaderLink.astro";
 import { SITE_TITLE } from "../consts";
 import ThemeToggle from "./ThemeToggle.astro";
 import { Menu, Github, X } from "lucide-astro";
-import { Image } from "@unpic/astro";
+import { Image } from "astro:assets";
 import profileImage from "../assets/profile.png";
 import Button from "@/components/ui/Button.astro";
-import { generateBlurhashPlaceholder } from "@/lib/blurhash";
-
-const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile.png');
 ---
 
 <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -25,7 +22,6 @@ const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile
             width={64}
             height={64}
             loading="eager"
-            background={profilePlaceholder}
           />
         </div>
         <span class="hidden font-bold sm:inline-block tracking-tight">
@@ -51,7 +47,6 @@ const profilePlaceholder = await generateBlurhashPlaceholder('src/assets/profile
             width={64}
             height={64}
             loading="eager"
-            background={profilePlaceholder}
           />
         </div>
         <span class="font-bold tracking-tight">
