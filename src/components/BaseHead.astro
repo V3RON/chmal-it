@@ -4,7 +4,8 @@
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import { SITE_TITLE } from '../consts';
-import SpeedInsights from "@vercel/speed-insights/astro";
+import VercelSpeedInsights from "@vercel/speed-insights/astro";
+import VercelAnalytics from '@vercel/analytics/astro'
 
 interface Props {
 	title: string;
@@ -112,3 +113,6 @@ if (isBlogPost) {
 		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 	}
 </script>
+
+<VercelSpeedInsights />
+<VercelAnalytics />
