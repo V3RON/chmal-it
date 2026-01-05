@@ -3,6 +3,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import { ArrowRight } from "lucide-astro";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
+import { getReadingTime } from "@/lib/readingTime";
 
 interface Props {
   post: CollectionEntry<"blog">;
@@ -11,8 +12,7 @@ interface Props {
 
 const { post, class: className } = Astro.props;
 
-const wordCount = post.body ? post.body.split(/\s+/g).length : 0;
-const readingTime = Math.ceil(wordCount / 200);
+const readingTime = getReadingTime(post.body);
 ---
 
 <a href={`/blog/${post.id}`} class={cn("group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1", className)}>
