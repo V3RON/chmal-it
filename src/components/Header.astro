@@ -116,6 +116,9 @@ import Button from "@/components/ui/Button.astro";
         menu.setAttribute('data-state', 'open');
         menu.classList.remove('invisible', 'pointer-events-none');
         document.body.style.overflow = 'hidden';
+        
+        // Focus close button when menu opens
+        setTimeout(() => close.focus(), 100);
       } else {
         menu.setAttribute('data-state', 'closed');
         menu.classList.add('pointer-events-none');
@@ -124,10 +127,42 @@ import Button from "@/components/ui/Button.astro";
           if (menu.getAttribute('data-state') === 'closed') {
             menu.classList.add('invisible');
             document.body.style.overflow = '';
+            // Return focus to trigger
+            trigger.focus();
           }
         }, 300);
       }
     };
+
+    // Focus trap
+    menu.addEventListener('keydown', (e) => {
+      if (menu.getAttribute('data-state') !== 'open') return;
+
+      if (e.key === 'Escape') {
+        toggleMenu(false);
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const focusableElements = menu.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusableElement = focusableElements[0] as HTMLElement;
+        const lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
 
     trigger.addEventListener('click', () => toggleMenu(true));
     close.addEventListener('click', () => toggleMenu(false));
