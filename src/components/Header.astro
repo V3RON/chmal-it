@@ -1,6 +1,6 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
-import { SITE_TITLE } from "../consts";
+import { SITE_TITLE, NAV_LINKS } from "../consts";
 import ThemeToggle from "./ThemeToggle.astro";
 import { Menu, Github, X } from "lucide-astro";
 import { Image } from "astro:assets";
@@ -29,10 +29,9 @@ import Button from "@/components/ui/Button.astro";
         </span>
       </a>
       <nav class="flex items-center space-x-6 text-sm font-medium">
-        <HeaderLink href="/blog">Blog</HeaderLink>
-        <HeaderLink href="/projects">Projects</HeaderLink>
-        <HeaderLink href="/talks">Talks</HeaderLink>
-        <HeaderLink href="/about">About</HeaderLink>
+        {NAV_LINKS.map((link) => (
+          <HeaderLink href={link.href}>{link.label}</HeaderLink>
+        ))}
       </nav>
     </div>
 
@@ -94,10 +93,9 @@ import Button from "@/components/ui/Button.astro";
         </button>
       </div>
       <nav class="flex flex-col space-y-4">
-        <a href="/blog" class="text-lg font-medium transition-colors hover:text-primary">Blog</a>
-        <a href="/projects" class="text-lg font-medium transition-colors hover:text-primary">Projects</a>
-        <a href="/talks" class="text-lg font-medium transition-colors hover:text-primary">Talks</a>
-        <a href="/about" class="text-lg font-medium transition-colors hover:text-primary">About</a>
+        {NAV_LINKS.map((link) => (
+          <a href={link.href} class="text-lg font-medium transition-colors hover:text-primary">{link.label}</a>
+        ))}
       </nav>
     </div>
   </div>
