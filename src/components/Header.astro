@@ -79,12 +79,12 @@ import Button from "@/components/ui/Button.astro";
 </header>
 
 {/* Mobile Menu Overlay - Outside header to ensure full viewport coverage */}
-<div id="mobile-menu" class="fixed inset-0 z-[100] md:hidden opacity-0 invisible pointer-events-none transition-opacity duration-300" data-state="closed">
+<div id="mobile-menu" class="fixed inset-0 z-[100] md:hidden invisible pointer-events-none transition-all duration-300 group" data-state="closed">
   {/* Backdrop */}
-  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-auto cursor-pointer" aria-hidden="true"></div>
+  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-data-[state=open]:opacity-100 pointer-events-auto cursor-pointer" aria-hidden="true"></div>
   
   {/* Panel */}
-  <div id="mobile-menu-panel" class="absolute right-0 top-0 z-10 h-full w-full bg-background p-6 shadow-xl transition-transform duration-300 translate-x-full pointer-events-auto overflow-y-auto">
+  <div id="mobile-menu-panel" class="absolute right-0 top-0 z-10 h-full w-full bg-background p-6 shadow-xl transition-transform duration-300 translate-x-full group-data-[state=open]:translate-x-0 pointer-events-auto overflow-y-auto">
     <div class="flex flex-col space-y-6">
       <div class="flex items-center justify-between">
         <span class="font-bold text-lg">{SITE_TITLE}</span>
@@ -102,87 +102,44 @@ import Button from "@/components/ui/Button.astro";
   </div>
 </div>
 
-<script is:inline>
-  (function() {
-    let initialized = false;
-    
-    function initMobileMenu() {
-      if (initialized) return;
-      
-      const trigger = document.getElementById('mobile-menu-trigger');
-      const close = document.getElementById('mobile-menu-close');
-      const backdrop = document.getElementById('mobile-menu-backdrop');
-      const menu = document.getElementById('mobile-menu');
-      const panel = document.getElementById('mobile-menu-panel');
+<script>
+  function initMobileMenu() {
+    const trigger = document.getElementById('mobile-menu-trigger');
+    const close = document.getElementById('mobile-menu-close');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    const menu = document.getElementById('mobile-menu');
 
-      if (!trigger || !close || !menu || !backdrop || !panel) {
-        return;
-      }
+    if (!trigger || !close || !backdrop || !menu) return;
 
-      initialized = true;
-
-      const toggleMenu = (isOpen) => {
-        if (isOpen) {
-          menu.setAttribute('data-state', 'open');
-          // Remove invisible first, then add visible classes
-          menu.classList.remove('opacity-0', 'invisible', 'pointer-events-none');
-          menu.classList.add('opacity-100', 'visible', 'pointer-events-auto');
-          backdrop.classList.remove('opacity-0');
-          backdrop.classList.add('opacity-100');
-          panel.classList.remove('translate-x-full');
-          panel.classList.add('translate-x-0');
-          document.body.style.overflow = 'hidden'; // Prevent scrolling
-        } else {
-          menu.setAttribute('data-state', 'closed');
-          // Start closing animation - remove visible classes, add opacity-0
-          menu.classList.remove('opacity-100', 'visible', 'pointer-events-auto');
-          menu.classList.add('opacity-0', 'pointer-events-none');
-          backdrop.classList.remove('opacity-100');
-          backdrop.classList.add('opacity-0');
-          panel.classList.remove('translate-x-0');
-          panel.classList.add('translate-x-full');
-          
-          // Wait for transition to complete before hiding completely
-          setTimeout(() => {
+    const toggleMenu = (isOpen: boolean) => {
+      if (isOpen) {
+        menu.setAttribute('data-state', 'open');
+        menu.classList.remove('invisible', 'pointer-events-none');
+        document.body.style.overflow = 'hidden';
+      } else {
+        menu.setAttribute('data-state', 'closed');
+        menu.classList.add('pointer-events-none');
+        // Wait for transition to complete
+        setTimeout(() => {
+          if (menu.getAttribute('data-state') === 'closed') {
             menu.classList.add('invisible');
             document.body.style.overflow = '';
-          }, 300); // Match transition duration (duration-300 = 300ms)
-        }
-      };
+          }
+        }, 300);
+      }
+    };
 
-      trigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu(true);
-      });
-      
-      close.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu(false);
-      });
-      
-      backdrop.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu(false);
-      });
+    trigger.addEventListener('click', () => toggleMenu(true));
+    close.addEventListener('click', () => toggleMenu(false));
+    backdrop.addEventListener('click', () => toggleMenu(false));
 
-      // Close on link click
-      menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => toggleMenu(false));
-      });
-    }
+    // Close on link click
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => toggleMenu(false));
+    });
+  }
 
-    // Try multiple ways to ensure it runs
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initMobileMenu);
-    } else {
-      // DOM already loaded, run immediately
-      initMobileMenu();
-    }
-    
-    // Also try after a short delay as fallback
-    setTimeout(initMobileMenu, 100);
-  })();
+  // Initialize on page load and after view transitions
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>
