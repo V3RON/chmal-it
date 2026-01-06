@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import { cn } from "@/lib/utils";
 import CopyCodeScript from "../components/CopyCodeScript.astro";
+import MatrixEasterEgg from "../components/MatrixEasterEgg.astro";
 
 interface Props {
   title?: string;
@@ -30,5 +31,6 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION, mainClass = "contain
     </div>
 
     <CopyCodeScript />
+    <MatrixEasterEgg />
   </body>
 </html>

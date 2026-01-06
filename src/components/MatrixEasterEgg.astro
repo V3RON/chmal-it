@@ -1,0 +1,34 @@
+---
+---
+
+<script>
+  function checkAndLoad() {
+    // Configuration
+    const FORCE_TRIGGER = false; // Set to false for actual time-based trigger
+    
+    // Check time (1AM - 3AM)
+    const now = new Date();
+    const hours = now.getHours();
+    const isTime = hours >= 1 && hours < 3;
+
+    // Check if already closed in this session to avoid annoyance
+    const isClosed = sessionStorage.getItem('matrix-egg-closed') === 'true';
+
+    // If conditions are not met, do nothing and return.
+    // The code for the effect is not even imported.
+    if ((!isTime && !FORCE_TRIGGER) || isClosed) {
+      return;
+    }
+
+    // Dynamic import to lazy-load the effect logic
+    import('../lib/matrixEffect').then(({ startMatrixEffect }) => {
+      startMatrixEffect();
+    });
+  }
+
+  // Initialize when DOM content is loaded
+  // In Astro, scripts run when the specific island/component loads.
+  // We use astro:page-load for ViewTransitions support.
+  document.addEventListener('astro:page-load', checkAndLoad); 
+  document.addEventListener('DOMContentLoaded', checkAndLoad); 
+</script>
