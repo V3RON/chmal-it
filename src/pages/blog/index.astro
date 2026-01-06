@@ -3,14 +3,35 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import PageHeader from "@/components/PageHeader.astro";
 import BlogPostCard from "@/components/BlogPostCard.astro";
+import Tag from "@/components/Tag.astro";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+
+const allTags = posts.flatMap((post) => post.data.tags || []);
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const tags = Object.keys(tagCounts).sort();
 ---
 
 <BaseLayout title="Blog">
   <PageHeader title="Blog" description="A collection of thoughts, tutorials, and guides." />
+  
+  {tags.length > 0 && (
+    <div class="mt-10">
+      <h2 class="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">Topics</h2>
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <Tag tag={tag} count={tagCounts[tag]} variant="outline" class="hover:border-foreground/50" />
+        ))}
+      </div>
+    </div>
+  )}
+
   <hr class="my-8 border-border/40" />
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {

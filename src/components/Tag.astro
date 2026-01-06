@@ -1,0 +1,19 @@
+---
+import Badge from "./ui/Badge.astro";
+
+interface Props {
+  tag: string;
+  class?: string;
+  variant?: "secondary" | "outline" | "default" | "destructive";
+  count?: number;
+}
+
+const { tag, class: className, variant = "secondary", count } = Astro.props;
+---
+
+<a href={`/blog/tags/${tag}`} class:list={["no-underline transition-all hover:scale-105", className]}>
+  <Badge variant={variant} class="py-1 px-2.5 font-medium flex gap-2 items-center">
+    <span>{tag}</span>
+    {count !== undefined && <span class="text-[10px] opacity-70 px-1 py-0.5 rounded-sm bg-background/50">{count}</span>}
+  </Badge>
+</a>

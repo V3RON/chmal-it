@@ -1,5 +1,6 @@
 ---
 import FormattedDate from "@/components/FormattedDate.astro";
+import Tag from "@/components/Tag.astro";
 import { ArrowRight } from "lucide-astro";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
@@ -15,24 +16,39 @@ const { post, class: className } = Astro.props;
 const readingTime = getReadingTime(post.body);
 ---
 
-<a href={`/blog/${post.id}`} class={cn("group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1", className)}>
-  <div class="space-y-4">
+<div class={cn("group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-muted/20 p-6 transition-all hover:bg-muted/40 hover:shadow-lg hover:-translate-y-1", className)}>
+  <a href={`/blog/${post.id}`} class="absolute inset-0 z-0">
+    <span class="sr-only">Read {post.data.title}</span>
+  </a>
+
+  <div class="relative z-10 space-y-4 pointer-events-none">
     <h3 class="font-bold text-xl leading-tight group-hover:underline decoration-2 underline-offset-4 decoration-primary/50">{post.data.title}</h3>
     <p class="text-muted-foreground line-clamp-3 leading-relaxed">
       {post.data.description}
     </p>
   </div>
-  <div class="mt-6 flex items-center justify-between text-sm text-muted-foreground">
-    <div class="flex items-center gap-2">
-      <FormattedDate date={post.data.pubDate} />
-      {readingTime > 0 && (
-        <>
-          <span>•</span>
-          <span>{readingTime} min read</span>
-        </>
-      )}
+  
+  <div class="relative z-10 mt-6 flex flex-col gap-4 pointer-events-none">
+    <div class="flex items-center justify-between text-sm text-muted-foreground">
+      <div class="flex items-center gap-2">
+        <FormattedDate date={post.data.pubDate} />
+        {readingTime > 0 && (
+          <>
+            <span>•</span>
+            <span>{readingTime} min read</span>
+          </>
+        )}
+      </div>
+      <ArrowRight class="h-4 w-4 opacity-0 transition-all -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" />
     </div>
-    <ArrowRight class="h-4 w-4 opacity-0 transition-all -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" />
+
+    {post.data.tags && post.data.tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 pointer-events-auto">
+        {post.data.tags.map((tag) => (
+          <Tag tag={tag} />
+        ))}
+      </div>
+    )}
   </div>
-</a>
+</div>
 

@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import PageHeader from "@/components/PageHeader.astro";
+import BlogPostCard from "@/components/BlogPostCard.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags || []))];
+  
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { 
+      posts: posts.filter((post) => post.data.tags?.includes(tag))
+                  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<BaseLayout title={`Blog - ${tag}`}>
+  <PageHeader title={`Blog posts: ${tag}`} description={`Browse all posts tagged with ${tag}`} />
+  <hr class="my-8 border-border/40" />
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      posts.map((post) => (
+        <BlogPostCard post={post} />
+      ))
+    }
+  </div>
+</BaseLayout>
