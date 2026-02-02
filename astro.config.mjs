@@ -4,12 +4,16 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
-
 import react from "@astrojs/react";
+import vercel from '@astrojs/vercel';
+ 
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://chmal.it",
+  adapter: vercel({
+    edgeMiddleware: true,
+  }),
   integrations: [
     mdx(),
     sitemap(),
@@ -18,12 +22,14 @@ export default defineConfig({
     }),
     react(),
   ],
+
   markdown: {
     shikiConfig: {
       theme: "tokyo-night",
       wrap: true,
     },
   },
+
   vite: {
     ssr: {
       external: ["sharp"],

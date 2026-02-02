@@ -15,10 +15,16 @@ pnpm-debug.log*
 
 # environment variables
 .env
+.env.local
 .env.production
+
+# Vercel
+.vercel/
 
 # macOS-specific files
 .DS_Store
 
 # jetbrains setting folder
 .idea/
+.vercel
+.env*.local
