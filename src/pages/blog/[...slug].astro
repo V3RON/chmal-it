@@ -57,8 +57,9 @@ const readingTime = getReadingTime(post.body);
             <Image
               src={post.data.heroImage}
               alt={post.data.title}
-              width={720}
-              height={405}
+              widths={[800, 1200, 1600, 2000]}
+              sizes="(max-width: 768px) 100vw, 720px"
+              quality={90}
               loading="eager"
               class="mt-8 rounded-md border border-border/40 bg-muted transition-colors"
             />

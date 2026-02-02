@@ -1,0 +1,249 @@
+---
+title: 'Building Voltra: Renderer'
+description: 'How we dropped react-reconciler to build a custom, stateless renderer that converts React Native JSX into native widgets.'
+pubDate: 2026-02-02T08:00Z
+heroImage: ../../assets/building-voltra-renderer.png
+tags: [React, Voltra]
+--- 
+
+import JsxVsReality from '../../components/building-voltra-renderer/JsxVsReality';
+import RendererWalk from '../../components/building-voltra-renderer/RendererWalk';
+import HooksImplementation from '../../components/building-voltra-renderer/HooksImplementation';
+
+Voltra is a library that lets React Native developers build **native Live Activities and Widgets using standard React components** - no Swift or Kotlin required.
+
+Under the hood, Voltra uses a custom renderer that transforms React Native JSX into JSON at runtime. There is **no build-time magic involved**. The goal is straightforward: allow developers to define and update the layout of Live Activities and Widgets dynamically over the lifetime of an app.
+
+The first version of Voltra relied on an existing rendering solution. As the project evolved, its requirements gradually drifted away from what that approach was designed to handle. At some point, it became clear that continuing down that path would introduce more complexity than it removed.
+
+This article walks through what JSX actually is, how React renders it, why the original approach stopped working, and how a custom renderer, built specifically for this use case, ended up being the simplest solution.
+
+## What is JSX, really?
+
+Have you ever wondered what is actually happening under the hood of the JSX you use to describe your element hierarchies?
+
+I did, so I dug into the React source code to find out. In simple terms, JSX is basically a fancy way to define objects of a predefined shape. Technically, you could drop JSX entirely and use `React.createElement` in its place, and it would work just fine. You might lose some type safety, but the outcome would be virtually identical.
+
+We can say JSX is just **syntactic sugar**, making it convenient to create UI components. Ultimately, we end up with a large tree structure starting from the main component, where each node represents a UI element, its props, and its children.
+
+<JsxVsReality client:load />
+
+## Rendering, reconciliation, and commitment
+
+With the JSX in place, we can move on to rendering. As you know, React allows you to define custom components. The initial JSX tree you create includes references to these custom components, but it does not yet include their children. It includes the *value* of the children prop passed to it, but whatever is returned from your component isn't there yet.
+
+**That's where rendering comes in.**
+
+In this process, React walks the JSX tree and determines what to do with each node. If it stumbles upon a custom component, it renders it - executing the function and placing the result in its spot. It continues walking down the tree until there is nothing left. By the end, the tree is composed entirely of so-called **Host Components** - components native to the given platform. For the web, this means `div`, `span`, and other HTML tags.
+
+The next phase is **reconciliation**. This is the moment when that tree of host components is converted into a series of actions required to make the UI consistent with the description. Some elements will be created, some mutated, and others removed. Finally, we have a list of actions we need to execute to bring the UI into a synchronous state with the JSX.
+
+The last phase is the **commit phase**, where changes are actually applied, and the new state of the UI becomes visible.
+
+## The role of `react-reconciler`
+
+Thankfully, we don't usually need to implement reconciliation by hand. It isn't part of the core React package, but rather a separate package called `react-reconciler`. It is used by `react-dom`, `react-native`, and many other renderers to convert JSX into whatever format they need.
+
+To use `react-reconciler`, you provide a "host config" - basically an instruction set of what should be done when certain events occur (e.g., creating a new element or updating an existing one). The documentation for this package is unfortunately scarce, but by studying the source code of existing projects, it isn't too hard to understand.
+
+Voltra used to rely on `react-reconciler` to power its renderer. But at a certain point, I had to scrap it and start from scratch.
+
+## The problem with server-side rendering
+
+This is where the `react-reconciler` approach breaks down. In a server-side scenario, we only want to go through the JSX tree **once**.
+
+We don't need to handle updates. We don't want the code to have side effects. We just want the final description.
+
+Sounds easy, right? Well, `react-reconciler` is not the tool for that job. It is designed for client-side scenarios where app lifetime matters. We cannot safely make it ignore effects and other hooks; if a user decides to put a `useEffect` that reaches out to client-side globals, we get an exception that could crash the server.
+
+However, we know that server-side rendering (SSR) is possible - `react-dom` has these capabilities built-in. So, how does it work?
+
+It turns out there are two totally separate implementations of `react-dom`: one for the client and one for the server. While the client version uses `react-reconciler`, the server version does not. It implements its own rendering engine meant to traverse the hierarchy once and produce an output in a **stateless fashion**.
+
+That is exactly what Voltra needs. Voltra doesn't need persistence. Widgets won't maintain a connection with the app. Live Activities could, but they are not meant to be driven by the app, as the app can be killed by the system at any time. We need a way to simply take JSX and convert it into what Voltra expects.
+
+That is why I decided to follow the `react-dom` server approach and write a custom solution.
+
+But why not just use `react-dom/server` directly? The issue is that it is strictly designed to output HTML strings. Voltra, however, needs to produce a specific JSON structure to drive native mobile interfaces. We couldn't use the tool, but we could borrow the philosophy.
+
+## Rendering from scratch
+
+By now, you know that JSX is nothing more than a tree structure of objects. Some nodes point at React components, some point at primitive values (like strings), some are arrays, and others point at host components.
+
+Our job is to traverse this tree and, for each node, decide what to do:
+* **Host Component:** The job is simple - process the data.
+* **Primitive Value:** We might describe it as a text node.
+* **Array:** We recurse and process each element.
+* **React Component:** It's time to do some real work.
+
+```javascript
+function renderNode(node, context) {
+  // 1. Handle Primitives (Strings/Numbers)
+  if (typeof node === 'string' || typeof node === 'number') {
+    return { type: 'text', value: String(node) };
+  }
+
+  // 2. Handle Arrays (Fragments or children lists)
+  if (Array.isArray(node)) {
+    return node.map(child => renderNode(child, context));
+  }
+
+  // 3. Handle React Components (Functions)
+  if (typeof node.type === 'function') {
+    // Call the component to get the underlying JSX
+    const childJsx = node.type(node.props);
+    return renderNode(childJsx, context);
+  }
+
+  // 4. Handle Host Components (div, span, etc.)
+  return {
+    type: 'element',
+    tagName: node.type,
+    props: node.props,
+    children: renderNode(node.props.children, context)
+  };
+}
+```
+
+<RendererWalk client:visible />
+
+Voltra doesn't need to support effects, nor does it need memoization. However, there is one hook that is incredibly useful: `useContext`.
+
+Imagine an app that allows users to change the primary colors used across the UI. Usually, we use React Context to inject a theme object into all components that need it to avoid "prop drilling". We expect this same behavior to work in Live Activities and Widgets. To make that a reality, we need to implement `useContext` ourselves.
+
+### Hacking the dispatcher
+
+If you dig into React's implementation, you will find a special object called the **Dispatcher**.
+
+Generally, the hook functions you import from React don't include any implementation. They simply pass control to the current dispatcher. This dispatcher is only set when React is actively rendering a component; if you try to use hooks outside of a component, you get an error because there is no dispatcher to give control to.
+
+We can exploit this. Just before calling a function to render a component, we can set this dispatcher to our **custom implementation**. If `useContext` is called, our custom logic handles it. When rendering is finished, we revert the change.
+
+```javascript
+import React from 'react';
+
+// Access React's internal shared state
+// Note: This is an internal API and can change between React versions!
+const ReactInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+
+function renderWithHooks(component, props) {
+  const previousDispatcher = ReactInternals.ReactCurrentDispatcher.current;
+  
+  // 1. Inject our custom dispatcher
+  ReactInternals.ReactCurrentDispatcher.current = VoltraDispatcher;
+  
+  let result;
+  try {
+    // 2. Render the component (hooks will now use VoltraDispatcher)
+    result = component(props);
+  } finally {
+    // 3. Always restore the original dispatcher
+    ReactInternals.ReactCurrentDispatcher.current = previousDispatcher;
+  }
+  
+  return result;
+}
+```
+
+<HooksImplementation client:visible />
+
+### Handling context & stubs
+
+How do we handle the specific `useContext` calls?
+
+Since we are implementing a single-pass recursive renderer, we don't have a tree with parent pointers to traverse upwards. Instead, we can maintain the context state as we traverse **down**.
+
+We can maintain a registry of stacks - one for each Context object.
+*   **Provider:** When we encounter a `Context.Provider`, we push its value onto that context's stack before rendering children, and pop it off after.
+*   **Consumer:** When `useContext` is called, we peek at the top of the stack for that context. If the stack is empty, we fall back to the default value.
+
+Here is how we implemented the registry in Voltra:
+
+```javascript
+export const getContextRegistry = () => {
+  const contextMap = new Map();
+
+  return {
+    pushProvider: (context, value) => {
+      const stack = contextMap.get(context) || [];
+      stack.push(value);
+      contextMap.set(context, stack);
+    },
+    popProvider: (context) => {
+      const stack = contextMap.get(context);
+      if (stack) stack.pop();
+    },
+    readContext: (context) => {
+      const stack = contextMap.get(context);
+      return stack && stack.length > 0 
+        ? stack[stack.length - 1] 
+        : context._currentValue;
+    },
+  };
+};
+```
+
+And just like that, `useContext` is fully functional.
+
+What about other hooks? We don't want effects to be called, so we set `useEffect` to a "noop" (no-operation) function. For state, we simply return a tuple of the initial value and a noop function. For `useMemo`, we just call the factory. Generally, we provide stubs for all hooks so the app doesn't crash while trying to handle them.
+
+```typescript
+export const getHooksDispatcher = (registry: ContextRegistry): ReactHooksDispatcher => ({
+  useContext: <T>(context: Context<T>) => registry.readContext(context),
+  useState: <S>(initial?: S | (() => S)) => [
+    typeof initial === 'function' ? (initial as () => S)() : initial,
+    () => {}, // No-op setter
+  ],
+  useReducer: <S, I, A extends React.AnyActionArg>(
+    _: (prevState: S, ...args: A) => S,
+    initialArg: I,
+    init?: (i: I) => S
+  ): [S, React.ActionDispatch<A>] => {
+    const state = init ? init(initialArg) : initialArg
+    return [state as S, () => {}]
+  },
+  // Direct pass-throughs
+  useMemo: (factory) => factory(),
+  useCallback: (cb) => cb,
+  useRef: (initial) => ({ current: initial }),
+  // No-ops for effects
+  useEffect: () => {},
+  useLayoutEffect: () => {},
+  useInsertionEffect: () => {},
+  useId: () => Math.random().toString(36).substr(2, 9),
+  useDebugValue: () => {},
+  useImperativeHandle: () => {},
+  useDeferredValue: <T>(value: T) => value,
+  useTransition: () => [false, (func: () => void) => func()],
+  useSyncExternalStore: (_, getSnapshot) => {
+    return getSnapshot()
+  },
+})
+```
+
+## Is it really that simple?
+
+You now know what Voltra does under the hood to make Live Activities and Widgets possible from React Native.
+
+However, this is far from the *complete* picture of the Voltra renderer. There are many optimizations we handle so you don't have to. For instance, we process props by shortening their names according to a shared dictionary, and we deduplicate styles and elements, replacing them with references.
+
+```json
+// Input JSX: <Text style={{ color: 'red' }}>Hello</Text>
+
+// Output Voltra JSON (Simplified):
+{
+  "t": 1, // "t" maps to "Text" component in the dictionary
+  "p": {  // "p" maps to "props"
+    "s": 42 // "s" is a reference to the deduplicated style ID for { color: 'red' }
+  },
+  "c": "Hello" // "c" is "children"
+}
+```
+
+But what you went through today is the core of the Voltra renderer and it just might be the core of the custom renderer you build in the next couple of days.
+
+## Ready to build your own?
+
+The lesson here is simple: some things look far more complex than they actually are. It pays not to be afraid to look under the hood and hack together a solution.
+
+Sometimes, what starts as a "hack" turns out to be an elegant, high-performance piece of code. This is the exact mindset I used to develop Rozenite, Harness, and Voltra - and it's the same mindset that will help you build whatever comes next.
