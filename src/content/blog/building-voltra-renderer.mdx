@@ -120,28 +120,24 @@ Generally, the hook functions you import from React don't include any implementa
 We can exploit this. Just before calling a function to render a component, we can set this dispatcher to our **custom implementation**. If `useContext` is called, our custom logic handles it. When rendering is finished, we revert the change.
 
 ```javascript
-import React from 'react';
-
-// Access React's internal shared state
-// Note: This is an internal API and can change between React versions!
-const ReactInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-
 function renderWithHooks(component, props) {
-  const previousDispatcher = ReactInternals.ReactCurrentDispatcher.current;
-  
-  // 1. Inject our custom dispatcher
-  ReactInternals.ReactCurrentDispatcher.current = VoltraDispatcher;
-  
-  let result;
+  const reactDispatcher = React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+  const prevHooksDispatcher = reactDispatcher.H;
+
   try {
-    // 2. Render the component (hooks will now use VoltraDispatcher)
-    result = component(props);
+    // 1. Swap Dispatcher
+    // We will get to this part in a minute.
+    reactDispatcher.H = getVoltraHooksDispatcher();
+
+    // 2. Execute Component
+    const result = component(props);
+
+    // 3. Recurse
+    return renderNode(result);
   } finally {
-    // 3. Always restore the original dispatcher
-    ReactInternals.ReactCurrentDispatcher.current = previousDispatcher;
+    // 4. Restore Dispatcher
+    reactDispatcher.H = prevHooksDispatcher;
   }
-  
-  return result;
 }
 ```
 
