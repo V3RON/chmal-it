@@ -40,7 +40,6 @@ function getAllowedOrigins() {
   const origins = new Set<string>();
   const siteUrl = import.meta.env.SITE_URL?.trim();
   if (siteUrl) {
-    console.log('Site URL:', siteUrl);
     try {
       origins.add(new URL(siteUrl).origin);
     } catch {
@@ -50,7 +49,6 @@ function getAllowedOrigins() {
 
   const vercelUrl = import.meta.env.VERCEL_URL?.trim();
   if (vercelUrl) {
-    console.log('Vercel URL:', vercelUrl);
     origins.add(`https://${vercelUrl}`);
   }
 
@@ -68,9 +66,6 @@ function isOriginAllowed(request: Request, allowedOrigins: Set<string>) {
 
   try {
     const origin = new URL(originHeader).origin;
-    console.log('Origin to check:', origin);
-    console.log('Allowed origins:', JSON.stringify(allowedOrigins));
-    console.log('Size:', allowedOrigins.size);
     return allowedOrigins.has(origin);
   } catch {
     return false;
