@@ -1,7 +1,7 @@
 ---
 import Badge from "@/components/ui/Badge.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
-import { ArrowRight } from "lucide-astro";
+import ArrowRight from "lucide-astro/ArrowRight";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
 
@@ -38,4 +38,3 @@ const { talk, class: className } = Astro.props;
     <a href={talk.data.video} target="_blank" class="absolute inset-0 z-10"><span class="sr-only">Watch</span></a>
   ) : null}
 </div>
-

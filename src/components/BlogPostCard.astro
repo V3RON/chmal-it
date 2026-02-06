@@ -1,7 +1,7 @@
 ---
 import FormattedDate from "@/components/FormattedDate.astro";
 import Tag from "@/components/Tag.astro";
-import { ArrowRight } from "lucide-astro";
+import ArrowRight from "lucide-astro/ArrowRight";
 import type { CollectionEntry } from "astro:content";
 import { cn } from "@/lib/utils";
 import { getReadingTime } from "@/lib/readingTime";
@@ -51,4 +51,3 @@ const readingTime = getReadingTime(post.body);
     )}
   </div>
 </div>
-
