@@ -66,6 +66,8 @@ function isOriginAllowed(request: Request, allowedOrigins: Set<string>) {
 
   try {
     const origin = new URL(originHeader).origin;
+    console.log('Origin to check:', origin);
+    console.log('Allowed origins:', JSON.stringify(allowedOrigins));
     return allowedOrigins.has(origin);
   } catch {
     return false;
