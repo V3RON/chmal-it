@@ -1,0 +1,180 @@
+---
+title: "Building Rozenite: The injection"
+description: "How I intercept Metro's debugger frontend to inject custom DevTools panels by rewriting the URL and serving modified HTML."
+pubDate: 2026-02-08T08:00Z
+heroImage: ../../assets/building-rozenite-the-injection.png
+tags: [React, Rozenite]
+---
+
+Have you ever wondered what happens when you press `j` in your Metro terminal? A Chrome window pops up, the console connects, and you can inspect your JavaScript.
+
+It feels like magic. Or maybe just a standard part of your workflow that you take for granted. Since the deprecation of Flipper, this Chrome DevTools instance has become our primary window into the React Native runtime. The team behind it has built a rock-solid, high-performance foundation that handles the heavy lifting of connecting to the JS engine.
+
+But by design, it's a generic tool. It shows you the raw JavaScript reality, not the framework-level abstractions we think in. It doesn't natively visualize React Navigation stacks, or Reanimated shared values, or specific native module states.
+
+I wanted to build specialized panels that understood my app, effectively adding custom gauges to this dashboard. But the debugger is distributed as a pre-bundled artifact. It wasn't designed to be extended by the end user.
+
+So, I had to find a way to extend it myself.
+
+## The discovery
+
+The first step was understanding what I was looking at. When the debugger window opens, it looks like a specialized application. You don't even see an address bar. It looks native.
+
+But if you undock the DevTools (yes, you can use DevTools _on_ the DevTools window), the illusion breaks. Inspecting the window reveals that it's just a website served from localhost.
+
+I dug deeper. The UI is actually distributed via a package called `@react-native/debugger-frontend`. This package contains the bundled version of the UI, and Metro serves it as static files via `@react-native/dev-middleware`.
+
+The source code for that frontend lives in `facebook/react-native-devtools-frontend`. It's a massive, complex repository with a heavy build system. Forking it to add a single panel would be a maintenance nightmare. I'd be rebasing changes forever.
+
+But the realization that it's just a static HTML file being served by a local server gave me an idea. If I can intercept the request for that HTML file, I can inject my own code into it before it reaches the browser.
+
+## Step 1: The race condition
+
+My first thought was simple: write a Metro middleware to intercept `/debugger-frontend/`. But there was a problem. Metro executes its internal middleware, including the one that serves the debugger, _before_ any user-defined middleware can run.
+
+It's a race condition I couldn't win. By the time my code saw the request, the response had already been sent. It's like trying to intercept a letter that has already been delivered.
+
+The only way to stop it is to change the address on the envelope before it gets mailed. I had to monkey-patch the CLI function responsible for opening the browser URL.
+
+```tsx
+import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+
+// 1. Locate the internal module that opens the browser
+const getDevToolsFrontendUrlModulePath = path.dirname(
+  require.resolve("@react-native/dev-middleware/package.json"),
+);
+
+const getDevToolsFrontendUrlModule = require(
+  path.join(getDevToolsFrontendUrlModulePath, "/utils/getDevToolsFrontendUrl"),
+);
+
+// 2. Save the original function
+const getDevToolsFrontendUrl = getDevToolsFrontendUrlModule.default;
+
+// 3. Monkey-patch it
+getDevToolsFrontendUrlModule.default = (
+  experiments,
+  webSocketDebuggerUrl,
+  devServerUrl,
+  options,
+) => {
+  const originalUrl = getDevToolsFrontendUrl(
+    experiments,
+    webSocketDebuggerUrl,
+    devServerUrl,
+    options,
+  );
+  // Redirect to our custom endpoint so Metro passes it to us
+  return originalUrl.replace("/debugger-frontend/", "/rozenite/");
+};
+```
+
+Now, when you press 'j', Chrome opens `http://localhost:8081/rozenite/...`. And you know what happens? You get a **404 Page Not Found** error.
+
+That's actually perfect. It means we successfully bypassed the internal middleware. Metro doesn't recognize this path, so it lets the request fall through to the custom middleware layer, where we are waiting.
+
+## The intercept
+
+We use `server.enhanceMiddleware` in the Metro config to install our own handler. This is our landing zone.
+
+```tsx
+const { getDefaultConfig } = require("@react-native/metro-config");
+
+const config = getDefaultConfig(__dirname);
+
+config.server.enhanceMiddleware = (middleware, server) => {
+  return (req, res, next) => {
+    // 1. Listen for our custom path
+    if (req.url.startsWith("/rozenite/")) {
+      // 2. Rewrite the URL to match the file on disk
+      req.url = req.url.replace("/rozenite", "");
+
+      // 3. If it's the HTML entry point, we need to inject our code
+      if (req.url.includes("rn_fusebox.html")) {
+        const originalHtml = fs.readFileSync(
+          path.join(rnDevToolsFrontendPath, "rn_fusebox.html"),
+          "utf8",
+        );
+
+        const injectedHtml = injectRuntime(originalHtml);
+        res.setHeader("Content-Type", "text/html");
+        return res.end(injectedHtml);
+      }
+    }
+
+    // Fallback to default Metro middleware
+    return middleware(req, res, next);
+  };
+};
+
+module.exports = config;
+```
+
+## The injection
+
+We have the HTML content in memory. Now we need to plant our flag. We insert a script tag pointing to our runtime:
+
+```html
+<script type="module" src="./host.js"></script>
+```
+
+The `type="module"` attribute serves as the gateway to the browser's native module system.
+
+This allows our runtime to dynamically `import` internal modules from the React Native DevTools themselves. By sharing the execution context and module system, we can reuse their `UI` and `SDK` instances without managing complex version mismatches. We are essentially doing runtime module federation without the config file.
+
+However, browsers are (rightfully) paranoid. The page has a strict Content Security Policy (CSP). If we just drop a script tag in, Chrome will block it immediately.
+
+We need to parse the existing CSP meta tag, generate a unique nonce, and add it to the allowed sources:
+
+```tsx
+const nonce = crypto.randomUUID();
+
+// Extract the original CSP string from the HTML
+// It looks like: default-src 'self'; script-src 'self' ...
+const cspRegex =
+  /<meta[^>]*http-equiv="Content-Security-Policy"[^>]*content="([^"]*)"[^>]*>/;
+const cspMatch = html.match(cspRegex);
+const originalCSP = cspMatch[1];
+
+// Add our nonce to the allowed script sources
+const updatedCSP = originalCSP.replace(
+  /script-src\s+([^;]+)/,
+  `script-src $1 'nonce-${nonce}'`,
+);
+
+// Inject the script with the matching nonce
+const script = `<script nonce="${nonce}" type="module" src="./host.js"></script>`;
+```
+
+## The runtime
+
+Inside `host.js`, we are now running alongside the official debugger code. We share the same global scope.
+
+Because we injected ourselves as a module, we can now simply import the internal `UI` object. We are using the exact same instance that the main application uses.
+
+```tsx
+// This is the key: we import directly from the running DevTools application
+// Note the absolute path – we are importing from the browser's context
+import * as UI from "/rozenite/ui/legacy/legacy.js";
+
+export const createPanel = (title, url) => {
+  // 1. Create the view using the internal DevTools API
+  const view = new UI.InspectorView.SimpleView(title);
+
+  // 2. Add it to the tab bar
+  UI.InspectorView.InspectorView.instance().addPanel(view);
+};
+
+// Usage: createPanel('Rozenite', 'panel.html');
+```
+
+## Conclusion
+
+Is this a hack? Absolutely. It looks hacky, it smells hacky, and it relies on internal paths that could theoretically change.
+
+But there is a certain elegance to a good hack. By respecting the architecture of the host (HTML + HTTP + ESM) rather than fighting it, we built a solution that is remarkably robust. It has stood the test of time, requiring zero changes to work even with the recent introduction of the brand-new, Electron-based React Native DevTools shell.
+
+We have successfully broken into the debugger. We have pixels on the screen and code running in the context. In the next post, we'll break further into the DevTools to inject our custom messages into its communication link with the app.
