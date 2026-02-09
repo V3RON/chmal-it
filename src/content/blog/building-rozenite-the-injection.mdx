@@ -28,7 +28,7 @@ The source code for that frontend lives in `facebook/react-native-devtools-front
 
 But the realization that it's just a static HTML file being served by a local server gave me an idea. If I can intercept the request for that HTML file, I can inject my own code into it before it reaches the browser.
 
-## Step 1: The race condition
+## The race condition
 
 My first thought was simple: write a Metro middleware to intercept `/debugger-frontend/`. But there was a problem. Metro executes its internal middleware, including the one that serves the debugger, _before_ any user-defined middleware can run.
 
