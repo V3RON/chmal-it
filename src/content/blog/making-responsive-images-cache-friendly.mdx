@@ -1,0 +1,140 @@
+---
+title: 'Making Responsive Images Cache-Friendly'
+description: 'How size bucketing reduces image variants and lets cached lower-resolution files serve as instant placeholders for larger images.'
+pubDate: 2026-02-23T18:00:00Z
+heroImage: ../../assets/making-responsive-images-cache-friendly.png
+tags: [React Native, Performance, Caching]
+---
+
+Responsive images sound easy until you look at the cache.
+
+The usual setup is straightforward: take the rendered width and height, add them to a URL handled by an image optimization service, and let the service return a file that fits the screen. Every device gets the resolution it needs, and nobody downloads a huge original just to display a thumbnail.
+
+That worked well for us, until I noticed how many versions of the same image we were producing. A card requested one width, another layout requested a few pixels more, and the detail screen added yet another size. They looked identical, but each URL had its own cache entry.
+
+There was another clue when navigating from a list to a detail screen. The image had already been on screen as a thumbnail, yet the larger view started with a skeleton and loaded it all over again. The device had a perfectly usable version on disk. We simply had no way to find it.
+
+Fixing those two problems led to the same pipeline: group similar requests into a small set of sizes, remember which variants have reached the disk cache, and reuse one of them while the next one loads.
+
+## How many image sizes does an app need?
+
+Imagine three cards requesting widths of `381px`, `384px`, and `389px`. An image optimization service sees three different URLs, so it may generate three files. The CDN stores three entries, and the app can end up downloading and decoding all of them.
+
+The difference is technically precise and visually irrelevant.
+
+Once pixel density and flexible layouts get involved, these tiny differences appear everywhere. A width that looks like `128` in React Native becomes `384px` on a `3x` device. Percentage values depend on the container, and the container itself may change by a point or two between screens.
+
+Before reducing the number of variants, we first need to turn those layout values into a reliable target. Relative dimensions should be resolved against the measured container, unusually large values can be capped to the relevant layout bounds, and the result should be converted to physical pixels.
+
+The order matters. If we bucket a layout width of `200` before accounting for a `3x` pixel ratio, we may request an image far smaller than the `600px` file the screen needs.
+
+Aspect ratio deserves the same care. For many pipelines, choosing a width and deriving the height gives more stable results than rounding both dimensions separately. Crop and fit modes may require a different rule, but the same layout should always lead to the same transformed URL.
+
+Now that every request has a concrete physical size, we can safely make it a little less precise.
+
+## A shared vocabulary for image sizes
+
+Instead of sending every measured width to the image service, we round it up to the nearest predefined bucket:
+
+```ts
+const BUCKETS = [200, 400, 600, 800, 1000, 1200, 1600, 2000, 2400];
+
+export const getBucketSize = (size: number): number => {
+  return BUCKETS.find((bucket) => bucket >= size) ?? BUCKETS.at(-1)!;
+};
+```
+
+The `381px` and `389px` requests now become the same `400px` variant. Rounding up keeps enough pixels for a sharp result, while nearby layouts finally agree on a URL.
+
+I like to think of buckets as a shared vocabulary. A card no longer asks for an arbitrary number such as `389`. It asks for the `400` variant, just like every other layout in that range.
+
+The vocabulary should match the app. Thumbnails and cards may need tighter gaps because they appear frequently. Larger images can usually tolerate wider gaps, and the final bucket provides a useful ceiling for oversized requests.
+
+With that one change, the number of possible files becomes predictable. CDN hits improve, local cache hits improve, and the device does less network and decoding work. More importantly, each variant now has a stable name that we can keep track of.
+
+That brings us back to the thumbnail sitting unused in the disk cache.
+
+## Remembering what the app has already downloaded
+
+Expo Image already manages the files. Duplicating its disk cache would add plenty of complexity and very little value. What we need is a small index that tells us where a known variant ended up.
+
+The index maps a stable image identifier to its downloaded buckets and their local file paths:
+
+```ts
+type ImageCacheRegistry = Record<
+  string,
+  Partial<Record<number, string>>
+>;
+```
+
+Zustand is a good fit here. The state is tiny, several image components need access to it, and load events can update it without tying the registry to a particular screen.
+
+Whenever an image finishes loading, we know its source image and requested bucket. We can ask Expo Image for the corresponding cache path and register it:
+
+```ts
+async function registerLoadedVariant(
+  imageId: string,
+  bucket: number,
+  loadedUrl: string,
+) {
+  const registry = useImageCache.getState().registry;
+
+  if (registry[imageId]?.[bucket]) {
+    return;
+  }
+
+  const localUri = await getCachePathAsync(loadedUrl);
+
+  if (localUri) {
+    useImageCache.getState().register(imageId, bucket, localUri);
+  }
+}
+```
+
+The early return saves us from resolving the same cache path after every load event. The identifier also needs to represent the original image. A transformed URL is unsuitable because its dimensions make each bucket look like a separate source.
+
+At this point, the registry can answer a useful question: _Have we already seen this image at another size?_
+
+## Giving a cached image a second job
+
+Suppose a user taps a card that displayed the `400px` variant. The detail screen wants `1200px`, which still needs to load, but the smaller file is already on disk and can fill the space immediately.
+
+When the component renders, it looks through the registered variants for the same image. The selection rule can stay simple:
+
+1. Prefer the smallest cached variant that meets the target size.
+2. Skip it if it is excessively large for the target and would waste memory.
+3. Otherwise, use the largest cached variant below the target.
+
+The chosen local file goes to Expo Image as the `placeholder`. Expo Image displays it immediately and transitions to the requested remote source when that source is ready. If the registry has no suitable entry, the component uses its regular skeleton or loading state.
+
+The smaller image may look soft for a moment, especially on a large detail view. In motion, that brief transition tends to feel much better than returning to an empty box for an image the user was looking at a split second ago.
+
+This is where the two parts of the pipeline reinforce each other. Bucketing makes variants predictable, and the registry gives every downloaded variant a chance to help with the next request.
+
+## Making reuse part of navigation
+
+The pattern pays off most when the same image moves through the app: from thumbnail to card, then from card to detail view.
+
+Every surface should use the same normalization and bucket rules. Two compact layouts may land on the same variant and share it directly. A larger screen will request another bucket, but it can use either compact variant as a placeholder in the meantime.
+
+The result feels coordinated. Earlier screens warm the cache for later ones, and the bucket list keeps that process bounded. We get predictable reuse without teaching every screen which other screens may come before it.
+
+The registry is also useful outside rendering. Dominant color extraction, previews, and other image analysis can start with a local file when one is available. The download done for the UI can keep paying for itself.
+
+## Where the approach bends
+
+An in-memory registry only knows about images loaded during the current session. Expo Image may still have files after an app restart, but the index will no longer point to them. Persisting or rebuilding the registry is possible, although a session-level index already covers the common list-to-detail flow.
+
+Disk caches also evict files. A registered path can become stale, so placeholder failures should quietly fall back to the remote source. The largest bucket needs similar attention on unusually large displays, where a fixed ceiling may no longer provide enough resolution.
+
+Finally, registration depends on knowing the rendered size and matching it to the bucket used in the URL. Keeping that calculation in one shared place prevents the image request and cache index from disagreeing.
+
+These constraints are manageable because the registry remains an index. Expo Image continues to own caching, eviction, and loading, while the responsive image layer only records enough information to connect one render to the next.
+
+## Conclusion
+
+The original problem looked like a pile of unrelated image URLs and a detail screen that loaded too slowly. Both came from the same missing piece: the app had no shared vocabulary for image sizes.
+
+Buckets provide that vocabulary. They turn arbitrary layout measurements into a compact set of reusable variants. A lightweight Zustand registry then remembers which of those variants Expo Image has stored locally, allowing an earlier download to serve as the placeholder for a later one.
+
+The app generates fewer transformed files, gets more value from its cache, and carries images smoothly from one layout to another. All it took was agreeing that `381px` and `389px` are close enough.
