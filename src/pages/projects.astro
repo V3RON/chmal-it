@@ -13,7 +13,17 @@ import TechBadge from "@/components/TechBadge.astro";
 
 const projects = await getCollection("projects");
 const featuredProjects = projects.filter((project) => project.data.featured);
-const otherProjects = projects.filter((project) => !project.data.featured);
+const projectOrder = ["sniffler", "skillgym", "agent-cdp", "react-native-grab"];
+const otherProjects = projects
+  .filter((project) => !project.data.featured)
+  .sort((a, b) => {
+    const aIndex = projectOrder.indexOf(a.id);
+    const bIndex = projectOrder.indexOf(b.id);
+    const aRank = aIndex === -1 ? projectOrder.length : aIndex;
+    const bRank = bIndex === -1 ? projectOrder.length : bIndex;
+
+    return aRank - bRank;
+  });
 ---
 
 <BaseLayout title="Projects" description="Open source projects and experiments.">
