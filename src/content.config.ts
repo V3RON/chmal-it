@@ -25,7 +25,9 @@ const talks = defineCollection({
 		date: z.coerce.date(),
 		event: z.string(),
 		location: z.string().optional(),
-		slides: z.string().url().optional(),
+		slides: z
+			.union([z.string().url(), z.string().regex(/^\/(?!\/)/)])
+			.optional(),
 		video: z.string().url().optional(),
 	}),
 });

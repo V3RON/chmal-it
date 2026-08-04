@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050507" />
+    <title>Giving Agents Hands and Eyes in React Native</title>
+    <link rel="stylesheet" href="./styles.css?v=37" />
+  </head>
+  <body>
+    <main class="deck" aria-label="Giving Agents Hands and Eyes in React Native presentation">
+      <div class="stage" id="stage">
+        <section class="slide landing-slide active" data-title="Landing">
+          <div class="orbit-system" role="img" aria-label="Animated atom with icons representing a bug, an eye, a phone, and a developer">
+            <div class="orbit-ring orbit-ring-a"></div>
+            <div class="orbit-ring orbit-ring-b"></div>
+            <div class="orbit-ring orbit-ring-c"></div>
+
+            <div class="orbit-plane orbit-plane-a">
+              <div class="orbit-icon orbit-icon-bug">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2H8V4H6V2Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10 11H14V13H10V11Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14 15H10V17H14V15Z" fill="currentColor"/>
+                    <path d="M16 4H14V6H10V4H8V6H6V9H4V7H2V9H4V11H6V13H2V15H6V17H4V19H2V21H4V19H6V22H18V19H20V21H22V19H20V17H18V15H22V13H18V11H20V9H22V7H20V9H18V6H16V4ZM8 20V8H16V20H8Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M16 4V2H18V4H16Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="orbit-plane orbit-plane-b">
+              <div class="orbit-icon orbit-icon-eye">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M16 20H8V18H16V20ZM8 18H4V16H8V18ZM20 18H16V16H20V18ZM4 16H2V14H4V16ZM22 16H20V14H22V16ZM14 15H10V11H14V15ZM2 14H0V12H2V14ZM24 14H22V12H24V14ZM4 12H2V10H4V12ZM22 12H20V10H22V12ZM8 10H4V8H8V10ZM20 10H16V8H20V10ZM16 8H8V6H16V8Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+
+              <div class="orbit-icon orbit-icon-phone">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M18 21H6V3H18V21ZM8 19H16V5H14V7H10V5H8V19ZM13 17H11V15H13V17Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="orbit-plane orbit-plane-c">
+              <div class="orbit-icon orbit-icon-person">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M16 9H10V22H8V16H6V22H4V16H2V7H16V9ZM22 16H11V14H20V4H11V2H22V16ZM9 6H5V2H9V6Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide question-slide" data-title="Delegating code">
+          <h2>Who is delegating writing code to agents?</h2>
+        </section>
+
+        <section class="slide question-slide" data-title="Delegating tests">
+          <h2>Who is delegating testing changes to agents?</h2>
+        </section>
+
+        <section class="slide title-slide" data-title="Title">
+          <div class="pixel-field pixel-field-large is-temporarily-hidden" aria-hidden="true"></div>
+          <div class="orbit-system" aria-hidden="true">
+            <div class="orbit-ring orbit-ring-a"></div>
+            <div class="orbit-ring orbit-ring-b"></div>
+            <div class="orbit-ring orbit-ring-c"></div>
+
+            <div class="orbit-plane orbit-plane-a">
+              <div class="orbit-icon orbit-icon-bug">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2H8V4H6V2Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10 11H14V13H10V11Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14 15H10V17H14V15Z" fill="currentColor"/>
+                    <path d="M16 4H14V6H10V4H8V6H6V9H4V7H2V9H4V11H6V13H2V15H6V17H4V19H2V21H4V19H6V22H18V19H20V21H22V19H20V17H18V15H22V13H18V11H20V9H22V7H20V9H18V6H16V4ZM8 20V8H16V20H8Z" fill="currentColor"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M16 4V2H18V4H16Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="orbit-plane orbit-plane-b">
+              <div class="orbit-icon orbit-icon-eye">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M16 20H8V18H16V20ZM8 18H4V16H8V18ZM20 18H16V16H20V18ZM4 16H2V14H4V16ZM22 16H20V14H22V16ZM14 15H10V11H14V15ZM2 14H0V12H2V14ZM24 14H22V12H24V14ZM4 12H2V10H4V12ZM22 12H20V10H22V12ZM8 10H4V8H8V10ZM20 10H16V8H20V10ZM16 8H8V6H16V8Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+
+              <div class="orbit-icon orbit-icon-phone">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M18 21H6V3H18V21ZM8 19H16V5H14V7H10V5H8V19ZM13 17H11V15H13V17Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="orbit-plane orbit-plane-c">
+              <div class="orbit-icon orbit-icon-person">
+                <span class="orbit-icon-shell">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M16 9H10V22H8V16H6V22H4V16H2V7H16V9ZM22 16H11V14H20V4H11V2H22V16ZM9 6H5V2H9V6Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+          <h1>Giving agents<br /><span>hands and eyes</span><br />in React Native</h1>
+          <div class="title-meta">
+            <p class="mono title-credit">Callstack / Szymon Chmal</p>
+          </div>
+        </section>
+
+        <section class="slide speaker-slide" data-title="About Szymon">
+          <div class="speaker-layout">
+            <div class="speaker-photo">
+              <img src="./assets/325CC595-EBE5-4A0D-99FC-898B654D2363_1_105_c.jpeg" alt="Szymon Chmal speaking on stage" loading="eager" />
+            </div>
+
+            <div class="speaker-copy">
+              <div class="slide-index mono">ABOUT / SPEAKER</div>
+              <h2>Szymon Chmal</h2>
+              <p class="speaker-role">Incubator Lead <span>at Callstack</span></p>
+
+              <div class="speaker-socials" aria-label="Social profiles">
+                <a href="https://github.com/V3RON" target="_blank" rel="noreferrer"><span class="mono">GITHUB</span><strong>V3RON</strong></a>
+                <a href="https://x.com/ChmalSzymon" target="_blank" rel="noreferrer"><span class="mono">X / TWITTER</span><strong>@ChmalSzymon</strong></a>
+                <a href="https://www.linkedin.com/in/szymon-chmal" target="_blank" rel="noreferrer"><span class="mono">LINKEDIN</span><strong>szymon-chmal</strong></a>
+              </div>
+
+              <div class="speaker-projects">
+                <p class="mono">OPEN SOURCE</p>
+                <div>
+                  <a href="https://github.com/callstackincubator/rozenite" target="_blank" rel="noreferrer">Rozenite <span>↗</span></a>
+                  <a href="https://github.com/callstackincubator/react-native-harness" target="_blank" rel="noreferrer">Harness <span>↗</span></a>
+                  <a href="https://github.com/callstackincubator/voltra" target="_blank" rel="noreferrer">Voltra <span>↗</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" data-title="The loop breaks">
+          <div class="slide-index mono">01 / THE GAP</div>
+          <h2>The agent loses the app<br />as soon as it starts</h2>
+          <div class="loop loop-broken" aria-label="Development loop where change, build, and run are visible to the agent">
+            <div class="loop-step loop-step-agent"><span>01</span>Change</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>02</span>Build</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>03</span>Run</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step"><span>04</span>Test</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step"><span>05</span>Debug</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step"><span>06</span>Verify</div>
+          </div>
+          <div class="ownership-line">
+            <span class="agent-owned">AGENT</span>
+            <span class="human-owned">DEVELOPER</span>
+          </div>
+          <p class="lead bottom-copy">Agents can change, build, and run. A developer still carries testing, debugging, and verification.</p>
+        </section>
+
+        <section class="slide acceleration-slide" data-title="Code generation skyrocketed">
+          <div class="slide-index mono">02 / THE ACCELERATION</div>
+          <h2>Code generation<br /><span>skyrocketed</span></h2>
+          <figure class="growth-chart growth-chart-generation">
+            <figcaption class="sr-only">An illustrative logarithmic chart showing code generation capacity accelerating sharply over time.</figcaption>
+            <svg viewBox="0 0 1400 440" role="img" aria-labelledby="generation-chart-title generation-chart-description">
+              <title id="generation-chart-title">Code generation growth</title>
+              <desc id="generation-chart-description">On a logarithmic vertical scale marked one, ten, one hundred, and one thousand times, a single purple line rises from the baseline toward one thousand times.</desc>
+              <g class="growth-grid" aria-hidden="true">
+                <path d="M130 60H1320M130 160H1320M130 260H1320M130 360H1320" />
+                <path d="M130 60V360M427 60V360M725 60V360M1022 60V360M1320 60V360" />
+              </g>
+              <g class="growth-axis mono" aria-hidden="true">
+                <path d="M130 60V360H1320" />
+                <text class="log-tick" x="106" y="360" text-anchor="end">1×</text>
+                <text class="log-tick" x="106" y="260" text-anchor="end">10×</text>
+                <text class="log-tick" x="106" y="160" text-anchor="end">100×</text>
+                <text class="log-tick" x="106" y="60" text-anchor="end">1,000×</text>
+                <text x="130" y="414">EARLIER</text>
+                <text x="1320" y="414" text-anchor="end">NOW</text>
+                <text x="28" y="210" transform="rotate(-90 28 210)" text-anchor="middle">RELATIVE CAPACITY · LOG10</text>
+              </g>
+              <path
+                class="generation-path"
+                pathLength="1"
+                d="M130 360 C390 358 590 348 770 322 C968 293 1135 213 1320 65"
+              />
+              <g class="generation-endpoint" aria-hidden="true">
+                <circle cx="1320" cy="65" r="8" />
+                <circle cx="1320" cy="65" r="20" />
+              </g>
+              <text class="generation-label mono" x="1160" y="105" text-anchor="end">CODE GENERATION</text>
+            </svg>
+          </figure>
+        </section>
+
+        <section class="slide acceleration-slide verification-slide" data-title="Verification stays flat">
+          <div class="slide-index mono">03 / THE BOTTLENECK</div>
+          <h2>Verification<br /><span>stays flat</span></h2>
+          <figure class="growth-chart growth-chart-verification">
+            <figcaption class="sr-only">An illustrative logarithmic comparison showing verification rising slowly while code generation accelerates far above it.</figcaption>
+            <svg viewBox="0 0 1400 440" role="img" aria-labelledby="verification-chart-title verification-chart-description">
+              <title id="verification-chart-title">Code generation and verification growth</title>
+              <desc id="verification-chart-description">On a logarithmic vertical scale marked one, ten, one hundred, and one thousand times, the muted purple code generation curve reaches the top while a green verification line remains close to one times.</desc>
+              <g class="growth-grid" aria-hidden="true">
+                <path d="M130 60H1320M130 160H1320M130 260H1320M130 360H1320" />
+                <path d="M130 60V360M427 60V360M725 60V360M1022 60V360M1320 60V360" />
+              </g>
+              <g class="growth-axis mono" aria-hidden="true">
+                <path d="M130 60V360H1320" />
+                <text class="log-tick" x="106" y="360" text-anchor="end">1×</text>
+                <text class="log-tick" x="106" y="260" text-anchor="end">10×</text>
+                <text class="log-tick" x="106" y="160" text-anchor="end">100×</text>
+                <text class="log-tick" x="106" y="60" text-anchor="end">1,000×</text>
+                <text x="130" y="414">EARLIER</text>
+                <text x="1320" y="414" text-anchor="end">NOW</text>
+                <text x="28" y="210" transform="rotate(-90 28 210)" text-anchor="middle">RELATIVE CAPACITY · LOG10</text>
+              </g>
+              <path
+                class="generation-path"
+                pathLength="1"
+                d="M130 360 C390 358 590 348 770 322 C968 293 1135 213 1320 65"
+              />
+              <path
+                class="verification-path"
+                pathLength="1"
+                d="M130 360 C450 359 780 357 1045 354 C1150 353 1242 350 1320 347"
+              />
+              <path class="verification-gap" d="M1250 118V350" aria-hidden="true" />
+              <g class="generation-endpoint" aria-hidden="true">
+                <circle cx="1320" cy="65" r="8" />
+                <circle cx="1320" cy="65" r="20" />
+              </g>
+              <g class="verification-endpoint" aria-hidden="true">
+                <circle cx="1320" cy="347" r="7" />
+                <circle cx="1320" cy="347" r="17" />
+              </g>
+              <text class="generation-label mono" x="1160" y="105" text-anchor="end">CODE GENERATION</text>
+              <text class="verification-label mono" x="1215" y="330" text-anchor="end">VERIFICATION</text>
+              <text class="gap-label mono" x="1225" y="230" text-anchor="end">THE GAP</text>
+            </svg>
+          </figure>
+        </section>
+
+        <section class="slide guessing-slide" data-title="Why agents are stuck guessing">
+          <div class="slide-index mono">04 / THE BLIND SPOTS</div>
+          <h2>Why are agents<br />stuck <span>guessing?</span></h2>
+          <div class="guessing-blocks">
+            <article class="guessing-block">
+              <div class="guessing-block-meta mono">
+                <span>01</span>
+                <span>RUNTIME</span>
+              </div>
+              <p>No insight into what’s happening <strong>under the hood</strong></p>
+            </article>
+            <article class="guessing-block">
+              <div class="guessing-block-meta mono">
+                <span>02</span>
+                <span>DEVICE</span>
+              </div>
+              <p>No easy way to interact with <strong>simulators or physical devices</strong></p>
+            </article>
+          </div>
+        </section>
+
+        <section class="slide rozenite-origin" data-title="Rozenite opens a window">
+          <div class="slide-index mono">05 / THE FIRST WINDOW</div>
+          <div class="split split-40-60">
+            <div>
+              <h2>Rozenite opened<br />the first window</h2>
+              <p class="lead">Agents gained structured access to the state inside a running React Native app.</p>
+              <a class="source-link mono" href="https://rozenite.dev" target="_blank" rel="noreferrer">rozenite.dev ↗</a>
+            </div>
+            <div class="devtools-window" aria-label="Stylized React Native DevTools with Rozenite panels">
+              <div class="window-bar"><span></span><span></span><span></span><b>REACT NATIVE DEVTOOLS</b></div>
+              <div class="window-body">
+                <div class="tool-list mono">
+                  <button class="active" type="button" data-rozenite-tab="navigation" aria-selected="true">Navigation</button>
+                  <button type="button" data-rozenite-tab="storage" aria-selected="false">Storage</button>
+                  <button type="button" data-rozenite-tab="network" aria-selected="false">Network</button>
+                  <button type="button" data-rozenite-tab="filesystem" aria-selected="false">Filesystem</button>
+                  <button type="button" data-rozenite-tab="controls" aria-selected="false">Controls</button>
+                </div>
+                <div class="rozenite-capture-stack">
+                  <img
+                    class="rozenite-panel-capture active"
+                    data-rozenite-panel="navigation"
+                    src="./assets/rozenite-react-navigation.png"
+                    alt="Rozenite React Navigation panel showing navigation timeline, action details, and navigation state"
+                    loading="eager"
+                  />
+                  <img
+                    class="rozenite-panel-capture"
+                    data-rozenite-panel="storage"
+                    src="./assets/rozenite-storage.png"
+                    alt="Rozenite Storage panel showing MMKV user storage entries"
+                    loading="eager"
+                    aria-hidden="true"
+                  />
+                  <img
+                    class="rozenite-panel-capture"
+                    data-rozenite-panel="network"
+                    src="./assets/rozenite-network.png"
+                    alt="Rozenite Network Activity panel showing captured HTTP requests"
+                    loading="eager"
+                    aria-hidden="true"
+                  />
+                  <img
+                    class="rozenite-panel-capture"
+                    data-rozenite-panel="filesystem"
+                    src="./assets/rozenite-filesystem.png"
+                    alt="Rozenite File System panel showing app files and a selected file preview"
+                    loading="eager"
+                    aria-hidden="true"
+                  />
+                  <img
+                    class="rozenite-panel-capture"
+                    data-rozenite-panel="controls"
+                    src="./assets/rozenite-controls.png"
+                    alt="Rozenite Controls panel showing runtime status and feature flag controls"
+                    loading="eager"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide rozenite-cli-slide" data-title="Rozenite in the terminal">
+          <div class="slide-index mono">06 / AGENT ACCESS</div>
+          <div class="split rozenite-cli-layout">
+            <div class="rozenite-cli-copy">
+              <h2>Agents reach Rozenite<br />through the shell</h2>
+              <p class="lead">One session connects the agent to the running app. Plugin domains expose navigation and storage as tools.</p>
+            </div>
+            <div class="agent-terminal" aria-label="Terminal history showing an agent inspecting navigation and MMKV state through Rozenite">
+              <div class="window-bar"><span></span><span></span><span></span><b>AGENT / ROZENITE SESSION</b></div>
+              <div class="terminal-history mono">
+                <div class="terminal-command"><b>$</b><code>npx rozenite agent session create</code></div>
+                <div class="terminal-output"><span>CONNECTED</span> session rz_7f2a · iPhone 16 Pro</div>
+
+                <div class="terminal-intent"># Where is the user?</div>
+                <div class="terminal-command terminal-command-wrap"><b>$</b><code>npx rozenite agent at-rozenite__react-navigation-plugin call \<br />&nbsp;&nbsp;--tool get-focused-route --args '{}' --session rz_7f2a</code></div>
+                <div class="terminal-json">{ "focusedRoute": { "name": "Payment" }, "routePath": ["Checkout", "Payment"] }</div>
+
+                <div class="terminal-intent"># What persisted state is available?</div>
+                <div class="terminal-command terminal-command-wrap"><b>$</b><code>npx rozenite agent at-rozenite__mmkv-plugin call \<br />&nbsp;&nbsp;--tool list-storages --args '{}' --session rz_7f2a</code></div>
+                <div class="terminal-json">{ "storages": [{ "id": "default", "entryCount": 12 }] }</div>
+
+                <div class="terminal-command terminal-command-wrap"><b>$</b><code>npx rozenite agent at-rozenite__mmkv-plugin call \<br />&nbsp;&nbsp;--tool list-entries --args '{"storageId":"default"}' --session rz_7f2a</code></div>
+                <div class="terminal-json">{ "keys": ["premium_offer", "checkout_step"] }</div>
+
+                <div class="terminal-command terminal-command-wrap"><b>$</b><code>npx rozenite agent at-rozenite__mmkv-plugin call \<br />&nbsp;&nbsp;--tool read-entry --args '{"storageId":"default","key":"premium_offer"}' --session rz_7f2a</code></div>
+                <div class="terminal-json terminal-json-focus">{ "entry": { "key": "premium_offer", "type": "boolean", "value": false } }</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide business-insight-slide" data-title="Business logic becomes addressable">
+          <div class="slide-index mono">07 / BUSINESS MEANING</div>
+          <h2>Rozenite can expose the<br />meaning behind the state</h2>
+          <div class="business-insight-flow" aria-label="Rozenite translates technical signals into app-defined business insight for agent reasoning">
+            <article>
+              <span class="panel-label mono">TECHNICAL SIGNALS</span>
+              <div class="business-signal mono"><b>route</b><code>/checkout/payment</code></div>
+              <div class="business-signal mono"><b>storage</b><code>premium_offer: false</code></div>
+              <div class="business-signal mono"><b>network</b><code>200 OK</code></div>
+            </article>
+            <i aria-hidden="true">→</i>
+            <article class="business-tool">
+              <span class="panel-label mono">APP-DEFINED TOOL</span>
+              <code class="business-command mono">explain-premium-offer</code>
+              <pre class="mono">{
+  "visible": false,
+  "eligible": false,
+  "reason": "already_subscribed"
+}</pre>
+            </article>
+            <i aria-hidden="true">→</i>
+            <article>
+              <span class="panel-label mono">AGENT REASONING</span>
+              <p>Understand the rule.</p>
+              <p>Form a hypothesis.</p>
+              <p>Change the conditions.</p>
+            </article>
+          </div>
+          <p class="statement">The debugging surface can include the business rules that define what should happen.</p>
+        </section>
+
+        <section class="slide react-debug-slide" data-title="React rendering becomes visible">
+          <div class="slide-index mono">08 / REACT RENDERING</div>
+          <h2>Agents can reason about<br />React rendering</h2>
+          <div class="react-debug-flow" aria-label="Rozenite and agent-react-devtools paths for agent reasoning">
+            <div class="react-entry-points">
+              <article>
+                <h3>Rozenite</h3>
+                <p>React insight alongside app state, network activity, and custom tools.</p>
+              </article>
+              <article>
+                <h3>agent-react-devtools</h3>
+                <p>Direct, CLI-first access to the React DevTools protocol.</p>
+              </article>
+            </div>
+            <div class="react-evidence">
+              <div class="react-evidence-list mono">
+                <span>component tree</span>
+                <span>props + state</span>
+                <span>hooks</span>
+                <span>render profiling</span>
+              </div>
+              <div class="render-trace mono">
+                <span>Checkout</span><i>1 render</i>
+                <span>PremiumOffer</span><i class="hot">4 renders</i>
+                <span>Price</span><i>1 render</i>
+              </div>
+            </div>
+          </div>
+          <p class="statement">Runtime evidence connects component behavior to the data and renders that produced it.</p>
+        </section>
+
+        <section class="slide visual-gap" data-title="State is not the whole product">
+          <div class="slide-index mono">09 / THE MISSING VIEW</div>
+          <h2>React evidence still does not prove<br />what appeared on screen</h2>
+          <div class="split split-even visual-comparison">
+            <div class="state-checks mono">
+              <div><span>✓</span> business rule correct</div>
+              <div><span>✓</span> props and state correct</div>
+              <div><span>✓</span> component rendered</div>
+              <div class="state-check-failed"><span>×</span> interface obscured</div>
+            </div>
+            <div class="phone-placeholder">
+              <div class="phone-notch"></div>
+              <div class="fake-checkout" role="img" aria-label="Checkout payment screen processing an order">
+                <div class="fake-status mono" aria-hidden="true"><span>9:41</span><span>● ●●</span></div>
+                <div class="fake-nav" aria-hidden="true"><span>←</span><strong>Checkout</strong></div>
+                <div class="fake-checkout-body" aria-hidden="true">
+                  <div class="fake-kicker mono">PAYMENT</div>
+                  <h3>Complete your order</h3>
+                  <div class="fake-offer">
+                    <div><span class="mono">PREMIUM</span><strong>Annual plan</strong></div>
+                    <b>$99</b>
+                  </div>
+                  <div class="fake-method">
+                    <span class="fake-card-mark mono">VISA</span>
+                    <div><strong>•••• 4242</strong><small>Expires 08/29</small></div>
+                    <b>✓</b>
+                  </div>
+                  <div class="fake-total"><span>Total today</span><strong>$99.00</strong></div>
+                  <div class="fake-cta">Continue</div>
+                </div>
+                <div class="fake-processing" aria-hidden="true">
+                  <span class="processing-spinner"></span>
+                  <strong>Processing payment</strong>
+                  <small>Please keep this screen open</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide agent-device-origin" data-title="The device layer">
+          <div class="slide-index mono">10 / THE DEVICE LAYER</div>
+          <div class="split split-40-60 agent-device-intro-layout">
+            <div class="agent-device-intro-copy">
+              <h2><span>agent-device</span> brings<br />the device into the loop</h2>
+              <p class="lead">Agents can see, understand, and operate what is actually running on simulators or physical devices.</p>
+              <a class="source-link mono" href="https://agent-device.dev" target="_blank" rel="noreferrer">agent-device.dev ↗</a>
+            </div>
+
+            <div class="agent-device-terminal-scene">
+              <div class="phone-placeholder agent-device-intro-phone" role="img" aria-label="Checkout screen on a mobile phone with the Continue button gently pulsing">
+                <div class="phone-notch"></div>
+                <div class="fake-checkout">
+                  <div class="fake-status mono" aria-hidden="true"><span>9:41</span><span>● ●●</span></div>
+                  <div class="fake-nav" aria-hidden="true"><span>←</span><strong>Checkout</strong></div>
+                  <div class="fake-checkout-body" aria-hidden="true">
+                    <div class="fake-kicker mono">PAYMENT</div>
+                    <h3>Complete your order</h3>
+                    <div class="fake-offer">
+                      <div><span class="mono">PREMIUM</span><strong>Annual plan</strong></div>
+                      <b>$99</b>
+                    </div>
+                    <div class="fake-method">
+                      <span class="fake-card-mark mono">VISA</span>
+                      <div><strong>•••• 4242</strong><small>Expires 08/29</small></div>
+                      <b>✓</b>
+                    </div>
+                    <div class="fake-total"><span>Total today</span><strong>$99.00</strong></div>
+                    <div class="fake-cta agent-device-button-pulse">Continue</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="agent-device-intro-terminal" aria-label="Terminal showing agent-device CLI commands">
+                <div class="window-bar"><span></span><span></span><span></span><b>TERMINAL</b></div>
+                <div class="agent-device-intro-commands mono">
+                  <div>
+                    <b>$</b>
+                    <code>agent-device snapshot -i</code>
+                  </div>
+                  <div>
+                    <b>$</b>
+                    <code>agent-device tap @e3</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" data-title="Structure and pixels">
+          <div class="slide-index mono">11 / EYES</div>
+          <h2>Agents read both<br />structure and pixels</h2>
+          <div class="split split-even eyes-layout">
+            <div class="snapshot mono">
+              <div class="panel-label">SEMANTIC VIEW</div>
+              <pre class="eyes-content"><span>@e1</span> [heading] "Checkout"
+<span>@e2</span> [text] "Annual plan · $99"
+<span>@e3</span> [button] "Continue"
+<span>@e4</span> [text] "Total today · $99.00"</pre>
+            </div>
+            <div class="visual-eye">
+              <div class="panel-label">VISUAL VIEW</div>
+              <div class="eyes-content visual-app-frame">
+                <div class="eyes-phone" role="img" aria-label="Compact checkout payment screen showing an annual plan and Continue button">
+                  <div class="eyes-screen-scale" aria-hidden="true">
+                    <div class="fake-checkout eyes-checkout">
+                      <div class="fake-status mono"><span>9:41</span><span>● ●●</span></div>
+                      <div class="fake-nav"><span>←</span><strong>Checkout</strong></div>
+                      <div class="fake-checkout-body">
+                        <div class="fake-kicker mono">PAYMENT</div>
+                        <h3>Complete your order</h3>
+                        <div class="fake-offer">
+                          <div><span class="mono">PREMIUM</span><strong>Annual plan</strong></div>
+                          <b>$99</b>
+                        </div>
+                        <div class="fake-method">
+                          <span class="fake-card-mark mono">VISA</span>
+                          <div><strong>•••• 4242</strong><small>Expires 08/29</small></div>
+                          <b>✓</b>
+                        </div>
+                        <div class="fake-total"><span>Total today</span><strong>$99.00</strong></div>
+                        <div class="fake-cta">Continue</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide hands-slide" data-title="Hands">
+          <div class="slide-index mono">12 / HANDS</div>
+          <div class="split split-55-45">
+            <div>
+              <h2>The agent continues<br />the flow on its own</h2>
+              <div class="command-stack mono">
+                <span><b>01</b> snapshot -i</span>
+                <span><b>02</b> tap @e3</span>
+                <span><b>03</b> fill @e7 "hello@callstack.com"</span>
+                <span><b>04</b> swipe up</span>
+                <span><b>05</b> snapshot -i</span>
+              </div>
+            </div>
+            <figure class="deck-video-frame gesture-video">
+              <video
+                class="deck-video"
+                src="./assets/perf-network-profiling.mp4"
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                aria-label="Agent profiling network and React Native performance while interacting with an Android emulator"
+              ></video>
+            </figure>
+          </div>
+        </section>
+
+        <section class="slide remote-boundary-slide" data-title="The Apple boundary">
+          <div class="slide-index mono">13 / REMOTE DEVICES</div>
+          <h2>Cloud agents do not<br />come with <span>iPhones</span></h2>
+          <div class="remote-boundary" aria-label="Cloud agents run in Linux while iOS simulators and devices require a remote Mac">
+            <div class="remote-environment remote-linux">
+              <span class="remote-label mono">CLOUD / LINUX</span>
+              <div class="agent-swarm" aria-hidden="true">
+                <i>AGENT 01</i>
+                <i>AGENT 02</i>
+                <i>AGENT 03</i>
+                <i>AGENT 04</i>
+              </div>
+              <strong>Lightweight sandboxes</strong>
+            </div>
+            <div class="remote-boundary-line" aria-hidden="true"></div>
+            <div class="remote-environment remote-macos">
+              <span class="remote-label mono">REMOTE / MACOS</span>
+              <div class="mac-device-host" aria-hidden="true">
+                <div class="mac-frame"><span></span></div>
+                <div class="ios-device"><span></span></div>
+              </div>
+              <strong>Simulators + devices</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide remote-lease-slide" data-title="Remote device leases">
+          <div class="slide-index mono">14 / DEVICE LEASES</div>
+          <h2>Lease the device<br />when the agent <span>needs it</span></h2>
+          <div class="remote-lease-layout">
+            <div class="lease-topology" aria-label="A random cloud agent connects through the proxy to a randomly selected simulator or device">
+              <div class="lease-agents mono">
+                <span>AGENT A</span>
+                <span>AGENT B</span>
+                <span>AGENT C</span>
+              </div>
+              <div class="lease-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="lease-proxy">
+                <span class="mono">PROXY</span>
+                <strong>Mac</strong>
+              </div>
+              <div class="lease-lines lease-lines-out" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="lease-devices mono">
+                <span>iPhone 17 Pro</span>
+                <span>Pixel 10 Pro</span>
+                <span>iPad Pro M5</span>
+              </div>
+            </div>
+            <div class="remote-command-stack mono" aria-label="Verified agent-device remote proxy commands">
+              <div><span>MAC</span><code>agent-device proxy --port 4310</code></div>
+              <div>
+                <span>AGENT</span>
+                <code>agent-device connect proxy<br />
+                  <b>--daemon-base-url https://example.trycloudflare.com/agent-device</b><br />
+                  <b>--daemon-auth-token $TOKEN</b>
+                </code>
+              </div>
+              <div><span>LEASE</span><code>agent-device open Maps --platform ios --device "iPhone 17 Pro"</code></div>
+              <div><span>RELEASE</span><code>agent-device close</code></div>
+              <div><span>DONE</span><code>agent-device disconnect</code></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide proxy-showcase-slide" data-title="Proxy showcase">
+          <div class="slide-index mono">15 / PROXY SHOWCASE</div>
+          <div class="proxy-showcase-layout">
+            <div class="proxy-showcase-copy">
+              <h2>The agent works<br />through the <span>proxy</span></h2>
+              <p class="lead">Interaction and visual evidence flow through the agent-device proxy.</p>
+              <div class="proxy-showcase-flow mono" aria-label="Remote agent-device proxy flow">
+                <span>CLOUD AGENT</span><i>→</i><span>PROXY</span><i>→</i><span>DEVICE</span>
+              </div>
+            </div>
+            <figure class="deck-video-frame proxy-video">
+              <video
+                class="deck-video"
+                src="./assets/claude-remote-agent.mp4"
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                aria-label="Claude controlling an app through agent-device and comparing before and after screenshots"
+              ></video>
+            </figure>
+          </div>
+        </section>
+
+        <section class="slide lineage-slide" data-title="Evidence stack">
+          <div class="slide-index mono">16 / THE EVIDENCE STACK</div>
+          <h2>One agent can combine<br />every layer of evidence</h2>
+          <div class="tool-lineage" aria-label="The layers of evidence available to an agent">
+            <article>
+              <span class="mono">01</span>
+              <h3>Business meaning</h3>
+              <p>Rozenite exposes app-defined rules, decisions, and safe controls.</p>
+            </article>
+            <article>
+              <span class="mono">02</span>
+              <h3>React rendering</h3>
+              <p>Rozenite and agent-react-devtools expose component behavior.</p>
+            </article>
+            <article>
+              <span class="mono">03</span>
+              <h3>JavaScript runtime</h3>
+              <p>CDP provides logs, execution context, and runtime diagnostics.</p>
+            </article>
+            <article class="current">
+              <span class="mono">04</span>
+              <h3>Device + pixels</h3>
+              <p>agent-device adds the rendered interface, interaction, and proof.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="slide demo-slide" data-title="The demo">
+          <div class="slide-index mono">17 / ONE BUG, END TO END</div>
+          <div class="split split-45-55">
+            <div>
+              <div class="bug-ticket mono">BUG #247</div>
+              <h2>"The premium offer disappears after restart."</h2>
+            </div>
+            <ol class="demo-steps">
+              <li><span>01</span>Reproduce the flow</li>
+              <li><span>02</span>Inspect persisted state</li>
+              <li><span>03</span>Check the network response</li>
+              <li><span>04</span>Inspect the React component</li>
+              <li><span>05</span>Change the condition</li>
+              <li><span>06</span>Repeat and capture evidence</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="slide evidence-slide" data-title="Evidence instead of confidence">
+          <div class="slide-index mono">18 / PROOF</div>
+          <h2>Evidence instead<br />of confidence</h2>
+          <div class="evidence-contrast">
+            <div class="confidence mono">
+              <span>AGENT RESPONSE</span>
+              <p>"The fix should work."</p>
+            </div>
+            <div class="evidence-receipt">
+              <div class="receipt-head mono"><span>VERIFICATION RECEIPT</span><b>#247</b></div>
+              <div class="receipt-row" style="--status-delay: 0.35s">
+                <span>Reproduce reported flow</span>
+                <b class="receipt-status">
+                  <i class="receipt-spinner" aria-hidden="true"></i>
+                  <span class="receipt-pass">✓ PASS</span>
+                </b>
+              </div>
+              <div class="receipt-row" style="--status-delay: 1.35s">
+                <span>Capture before state</span>
+                <b class="receipt-status">
+                  <i class="receipt-spinner" aria-hidden="true"></i>
+                  <span class="receipt-pass">✓ PASS</span>
+                </b>
+              </div>
+              <div class="receipt-row" style="--status-delay: 2.35s">
+                <span>Verify network response</span>
+                <b class="receipt-status">
+                  <i class="receipt-spinner" aria-hidden="true"></i>
+                  <span class="receipt-pass">✓ PASS</span>
+                </b>
+              </div>
+              <div class="receipt-row" style="--status-delay: 3.35s">
+                <span>Replay on iOS</span>
+                <b class="receipt-status">
+                  <i class="receipt-spinner" aria-hidden="true"></i>
+                  <span class="receipt-pass">✓ PASS</span>
+                </b>
+              </div>
+              <div class="receipt-row" style="--status-delay: 4.35s">
+                <span>Replay on Android</span>
+                <b class="receipt-status">
+                  <i class="receipt-spinner" aria-hidden="true"></i>
+                  <span class="receipt-pass">✓ PASS</span>
+                </b>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide replay-slide" data-title="Replay">
+          <div class="slide-index mono">19 / REPLAY</div>
+          <h2>One exploration becomes<br />a repeatable check</h2>
+          <div class="replay-flow" aria-label="Exploration becoming a CI replay">
+            <div><span class="mono">01</span><strong>Explore</strong><small>Temporary refs</small></div>
+            <i>→</i>
+            <div><span class="mono">02</span><strong>Stabilize</strong><small>Durable selectors</small></div>
+            <i>→</i>
+            <div><span class="mono">03</span><strong>Replay</strong><small>.ad script</small></div>
+            <i>→</i>
+            <div class="purple-block"><span class="mono">04</span><strong>Verify</strong><small>Local + CI</small></div>
+          </div>
+          <a class="source-link mono" href="https://agent-device.dev" target="_blank" rel="noreferrer">agent-device.dev ↗</a>
+        </section>
+
+        <section class="slide loop-closed-slide" data-title="The loop closes">
+          <div class="slide-index mono">20 / THE CLOSED LOOP</div>
+          <h2>The agent can work<br />through the running app</h2>
+          <div class="loop loop-complete" aria-label="Development loop where the agent operates the running app and carries the whole process">
+            <div class="loop-step loop-step-agent"><span>01</span>Change</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>02</span>Build</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>03</span>Run</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>04</span>Observe</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>05</span>Interact</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>06</span>Debug</div>
+            <div class="loop-arrow">→</div>
+            <div class="loop-step loop-step-agent"><span>07</span>Verify</div>
+          </div>
+          <div class="ownership-line ownership-line-complete">
+            <span class="agent-owned">AGENT</span>
+          </div>
+          <p class="lead bottom-copy">The agent carries the feedback loop. A developer sets direction and decides what ships.</p>
+        </section>
+
+        <section class="slide question-slide" data-title="What remains for developers">
+          <h2>What’s left for us, developers?</h2>
+        </section>
+
+        <section class="slide human-slide" data-title="The bigger picture">
+          <div class="slide-index mono">21 / THE BIGGER PICTURE</div>
+          <h2>Developers own<br />the bigger picture</h2>
+          <div class="human-decisions">
+            <article><span>01</span><p>Turn product intent into clear, unambiguous requirements.</p></article>
+            <article><span>02</span><p>Keep the architecture aligned with those requirements.</p></article>
+            <article><span>03</span><p>Make the system maintainable and extensible as it evolves.</p></article>
+            <article><span>04</span><p>Judge the evidence, risk, and readiness to ship.</p></article>
+          </div>
+          <p class="statement">The agent operates the loop. The developer keeps the whole system coherent.</p>
+        </section>
+
+        <section class="slide closing-slide" data-title="Start here">
+          <div class="closing-glow" aria-hidden="true"></div>
+          <header class="closing-header">
+            <div>
+              <div class="slide-index mono">22 / START HERE</div>
+              <h2>Give your agent the<br /><span>full feedback loop.</span></h2>
+            </div>
+          </header>
+
+          <div class="closing-board" aria-label="Open-source tools for giving agents access to a running app">
+            <article class="closing-card closing-card-rozenite">
+              <div class="closing-card-copy">
+                <span class="closing-card-index mono">01 / APP STATE</span>
+                <h3>Rozenite</h3>
+                <p>Expose insights into what’s happening under the hood.</p>
+                <a class="source-link mono" href="https://rozenite.dev" target="_blank" rel="noreferrer">rozenite.dev ↗</a>
+              </div>
+              <a class="closing-qr" href="https://github.com/callstackincubator/rozenite" target="_blank" rel="noreferrer" aria-label="Open the Rozenite GitHub repository">
+                <img src="./assets/qr/rozenite.svg" alt="QR code for the Rozenite GitHub repository" loading="eager" />
+              </a>
+            </article>
+
+            <article class="closing-card closing-card-device">
+              <div class="closing-card-copy">
+                <span class="closing-card-index mono">02 / DEVICE</span>
+                <h3>agent-device</h3>
+                <p>Let agents verify changes in real apps on real devices.</p>
+                <a class="source-link mono" href="https://agent-device.dev" target="_blank" rel="noreferrer">agent-device.dev ↗</a>
+              </div>
+              <a class="closing-qr" href="https://github.com/callstack/agent-device" target="_blank" rel="noreferrer" aria-label="Open the agent-device GitHub repository">
+                <img src="./assets/qr/agent-device.svg" alt="QR code for the agent-device GitHub repository" loading="eager" />
+              </a>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <nav class="deck-controls" aria-label="Presentation controls">
+      <button id="previous" type="button" aria-label="Previous slide">←</button>
+      <span id="counter" class="mono" aria-live="polite">01 / 26</span>
+      <button id="next" type="button" aria-label="Next slide">→</button>
+      <button id="overview" type="button" aria-label="Toggle slide overview" title="Overview (O)">⌘</button>
+      <button id="fullscreen" type="button" aria-label="Toggle fullscreen" title="Fullscreen (F)">⛶</button>
+    </nav>
+
+    <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+    <div class="keyboard-hint mono">← → NAVIGATE · F FULLSCREEN · O OVERVIEW</div>
+
+    <script src="./deck.js?v=4"></script>
+  </body>
+</html>
