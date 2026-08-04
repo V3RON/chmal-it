@@ -5,6 +5,7 @@ date: 2026-07-30
 event: "Chain React 2026"
 location: "Portland, OR, USA"
 slides: "/talks/giving-agents-hands-and-eyes/"
+video: "https://www.youtube.com/live/epuPwdDOkF0?si=OfMhZFjBzA90fY-F&t=21293"
 ---
 
 Most conversations about LLMs in development focus on code generation. This talk explores what becomes possible when agents can instead observe and interact with a running React Native application through its existing debugging surface.
