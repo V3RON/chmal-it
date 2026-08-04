@@ -195,6 +195,17 @@ pre {
   letter-spacing: -0.052em;
 }
 
+.landing-slide {
+  padding: 0;
+}
+
+.landing-slide .orbit-system {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
 h1,
 h2,
 h3,
@@ -344,6 +355,7 @@ h3 {
   color: #b9b5c4;
   line-height: 1.35;
 }
+
 .title-meta p:last-child {
   color: var(--muted);
   font-size: 14px;
@@ -649,7 +661,8 @@ h3 {
   will-change: offset-distance;
 }
 
-.title-slide.active .orbit-icon {
+.title-slide.active .orbit-icon,
+.landing-slide.active .orbit-icon {
   animation-play-state: running;
 }
 
@@ -3845,8 +3858,8 @@ h3 {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
-  align-content: space-between;
-  gap: 14px;
+  align-content: start;
+  gap: 12px;
   min-height: 350px;
   padding: 24px 28px 20px 30px;
   overflow: hidden;
@@ -3869,11 +3882,10 @@ h3 {
   background: var(--purple);
 }
 .closing-card:hover,
-.closing-card:focus-visible {
+.closing-card:focus-within {
   z-index: 3;
   border-color: var(--purple-bright);
   background: #14111d;
-  outline: none;
   transform: translateY(-3px);
 }
 .closing-card-copy {
@@ -3899,10 +3911,16 @@ h3 {
   font-size: 17px;
   line-height: 1.3;
 }
+.closing-card .source-link {
+  margin-top: 12px;
+}
 .closing-qr {
-  align-self: end;
   justify-self: start;
   text-align: center;
+}
+.closing-qr:focus-visible {
+  outline: 2px solid var(--purple-bright);
+  outline-offset: 4px;
 }
 .closing-qr img {
   display: block;
