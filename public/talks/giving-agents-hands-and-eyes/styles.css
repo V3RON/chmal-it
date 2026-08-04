@@ -896,8 +896,9 @@ h3 {
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 0 7px rgba(169, 135, 255, 0.28));
-  stroke-dasharray: 2000;
-  stroke-dashoffset: 2000;
+  /* Both paths use pathLength="1", so one dash always spans the full curve. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
 .verification-path {
@@ -907,8 +908,8 @@ h3 {
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 0 6px rgba(124, 246, 164, 0.2));
-  stroke-dasharray: 2000;
-  stroke-dashoffset: 2000;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
 .verification-gap {
@@ -1106,7 +1107,7 @@ h3 {
 @keyframes verification-line-draw {
   from {
     opacity: 0;
-    stroke-dashoffset: 2000;
+    stroke-dashoffset: 1;
   }
   to {
     opacity: 1;
